@@ -55,10 +55,53 @@
             pointer-events: auto;
         }
 
-        .main-title {
+       .main-title {
             font-family: 'Bebas Neue', cursive;
             letter-spacing: 5px;
             text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* টাইটেলের নিচে চ্যাপ্টার ফিল্টার বারের ডিজাইন */
+        .chapter-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            max-width: 1100px;
+            margin: 6px auto 18px auto;
+            padding: 0 16px;
+        }
+
+        .ch-filter-btn {
+            background: rgba(25, 25, 35, 0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            padding: 8px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .ch-filter-btn:hover {
+            transform: translateY(-2px) scale(1.04);
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.65);
+            color: #ffffff;
+        }
+
+        .ch-filter-btn.active {
+            background: #ffffff;
+            color: #0b0b0f;
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.55), 0 6px 16px rgba(0, 0, 0, 0.35);
+            transform: translateY(-2px) scale(1.06);
         }
 
         .gallery-grid {
@@ -207,15 +250,17 @@
 </head>
 <body>
 
-    <header class="text-center pt-10 pb-4">
+<header class="text-center pt-10 pb-4">
         <h1 class="main-title text-white text-7xl md:text-9xl mb-2">XsXX</h1>
-        <div class="w-full max-w-6xl mx-auto px-6 text-left">
-            <h2 class="text-white text-2xl font-light opacity-80">সানি লিওন</h2>
+        <!-- অটোমেটিক চ্যাপ্টার ফিল্টার বাটন বার (CH 1, CH 2, CH 3...) -->
+        <div id="chapter-filter-bar" class="chapter-filter-bar"></div>
+        <div id="first-chapter-title-wrap" class="w-full max-w-6xl mx-auto px-6 text-left">
+            <h2 id="first-chapter-title" class="text-white text-2xl font-light opacity-80">সানি লিওন</h2>
         </div>
     </header>
 
     <main class="gallery-grid" id="gallery"></main>
-<div class="w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left">
+    <div id="second-chapter-title-wrap" class="w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left">
         <h2 id="second-chapter-title" class="text-white text-2xl font-light opacity-80">alyx star</h2>
     </div>
     <section class="gallery-grid" id="gallery-sksk"></section>
@@ -442,39 +487,83 @@ const gallery = document.getElementById('gallery');
             return card;
         }
 
-        // ৪. আপনার দেওয়া নতুন সিরিয়াল অনুযায়ী সব চ্যাপ্টার সাজানো:
-        // ১ম: সানি লিওন | ২য়: alyx star | ৩য়: মিয়াঁ খলিফা | ৪র্থ (শেষ): সেরা কিছু
-        function initGallery() {
-            images = [];
-            gallery.innerHTML = '';
-            gallerySksk.innerHTML = '';
+let allChaptersList = [];
+        let activeFilterChapterIdx = 'all'; // 'all' মানে সব চ্যাপ্টার দেখাচ্ছে, আর 0, 1, 2... মানে নির্দিষ্ট চ্যাপ্টার
 
-            // ১ম চ্যাপ্টার: সানি লিওন
-            imageLinks.forEach((imgUrl, index) => {
-                const globalIndex = images.length;
-                images.push(imgUrl);
-                gallery.appendChild(createPhotoCard(imgUrl, globalIndex, index, 'Photo'));
-            });
+        function createChapterCard(imgUrl, chapterIdx, photoIdxInChapter, labelPrefix) {
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            card.dataset.animIndex = photoIdxInChapter;
+            card.innerHTML = `<img src="${imgUrl}" alt="${labelPrefix} ${photoIdxInChapter + 1}" loading="lazy" decoding="async">`;
+            card.onclick = () => openFullscreen(chapterIdx, photoIdxInChapter);
+            cardObserver.observe(card);
+            return card;
+        }
 
-            // চ্যাপ্টারগুলো খুঁজে বের করা
+        // ৪. সব চ্যাপ্টার একত্রিত করা (ভবিষ্যতে moreChapters-এ যত চ্যাপ্টারই যোগ করুন, অটোমেটিক চলে আসবে)
+        function buildAllChaptersList() {
             const alyxChapter = moreChapters.find(ch => ch.name.trim().toLowerCase() === 'alyx star');
             const seraKichuChapter = moreChapters.find(ch => ch.name.trim() === 'সেরা কিছু');
             const otherCustomChapters = moreChapters.filter(
                 ch => ch !== alyxChapter && ch !== seraKichuChapter
             );
 
-            // ২য় চ্যাপ্টার: alyx star (আগের ৪র্থ চ্যাপ্টারটি এখানে ২য় স্থানে বসবে)
-            const secondChapterData = alyxChapter || { name: 'alyx star', links: [] };
-            if (secondChapterTitle) {
-                secondChapterTitle.textContent = secondChapterData.name;
-            }
-            secondChapterData.links.forEach((imgUrl, index) => {
-                const globalIndex = images.length;
-                images.push(imgUrl);
-                gallerySksk.appendChild(createPhotoCard(imgUrl, globalIndex, index, secondChapterData.name));
-            });
+            const list = [
+                { name: 'সানি লিওন', links: imageLinks },
+                alyxChapter || { name: 'alyx star', links: [] },
+                { name: 'মিয়াঁ খলিফা', links: skskImageLinks },
+                ...otherCustomChapters
+            ];
 
-            // পরবর্তী চ্যাপ্টারগুলোর কন্টেইনার
+            if (seraKichuChapter) {
+                list.push(seraKichuChapter);
+            }
+            return list;
+        }
+
+        // টাইটেলের নিচে অটোমেটিক CH 1, CH 2, CH 3... বাটন তৈরি করা
+        function renderFilterButtons() {
+            const filterBar = document.getElementById('chapter-filter-bar');
+            if (!filterBar) return;
+            filterBar.innerHTML = '';
+
+            // সব চ্যাপ্টার একসাথে দেখার জন্য ALL বাটন
+            const allBtn = document.createElement('button');
+            allBtn.className = `ch-filter-btn ${activeFilterChapterIdx === 'all' ? 'active' : ''}`;
+            allBtn.textContent = 'ALL';
+            allBtn.onclick = () => selectChapterFilter('all');
+            filterBar.appendChild(allBtn);
+
+            // যতগুলো চ্যাপ্টার থাকবে ততগুলো CH 1, CH 2, CH 3... বাটন
+            allChaptersList.forEach((ch, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `ch-filter-btn ${activeFilterChapterIdx === idx ? 'active' : ''}`;
+                btn.textContent = `CH ${idx + 1}`;
+                btn.title = ch.name;
+                btn.onclick = () => selectChapterFilter(idx);
+                filterBar.appendChild(btn);
+            });
+        }
+
+        // বাটনে চাপ দিলে নির্দিষ্ট চ্যাপ্টার ফিল্টার হওয়া (আবার একই বাটনে চাপ দিলে সব চ্যাপ্টার ফিরে আসা)
+        function selectChapterFilter(targetIdx) {
+            if (activeFilterChapterIdx === targetIdx && targetIdx !== 'all') {
+                activeFilterChapterIdx = 'all';
+            } else {
+                activeFilterChapterIdx = targetIdx;
+            }
+            renderFilterButtons();
+            renderGalleryView();
+        }
+
+        function renderGalleryView() {
+            const firstTitleWrap = document.getElementById('first-chapter-title-wrap');
+            const firstTitleEl = document.getElementById('first-chapter-title');
+            const secondTitleWrap = document.getElementById('second-chapter-title-wrap');
+
+            gallery.innerHTML = '';
+            gallerySksk.innerHTML = '';
+
             let extraContainer = document.getElementById('extra-chapters-container');
             if (!extraContainer) {
                 extraContainer = document.createElement('div');
@@ -483,32 +572,67 @@ const gallery = document.getElementById('gallery');
             }
             extraContainer.innerHTML = '';
 
-            // ৩য় চ্যাপ্টার: মিয়াঁ খলিফা + অন্য কোনো নতুন চ্যাপ্টার থাকলে সেগুলো + সবার শেষে 'সেরা কিছু'
-            const orderedRemainingChapters = [
-                { name: 'মিয়াঁ খলিফা', links: skskImageLinks },
-                ...otherCustomChapters
-            ];
-            if (seraKichuChapter) {
-                orderedRemainingChapters.push(seraKichuChapter);
-            }
+            if (activeFilterChapterIdx === 'all') {
+                // সবগুলো চ্যাপ্টার দেখানো হবে
+                if (firstTitleWrap) firstTitleWrap.style.display = 'block';
+                if (firstTitleEl && allChaptersList[0]) {
+                    firstTitleEl.textContent = allChaptersList[0].name;
+                }
+                if (allChaptersList[0]) {
+                    allChaptersList[0].links.forEach((imgUrl, idx) => {
+                        gallery.appendChild(createChapterCard(imgUrl, 0, idx, allChaptersList[0].name));
+                    });
+                }
 
-            orderedRemainingChapters.forEach((chapter) => {
-                const titleDiv = document.createElement('div');
-                titleDiv.className = 'w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left';
-                titleDiv.innerHTML = `<h2 class="text-white text-2xl font-light opacity-80">${chapter.name}</h2>`;
-                extraContainer.appendChild(titleDiv);
+                if (allChaptersList[1]) {
+                    if (secondTitleWrap) secondTitleWrap.style.display = 'block';
+                    if (secondChapterTitle) secondChapterTitle.textContent = allChaptersList[1].name;
+                    gallerySksk.style.display = 'grid';
+                    allChaptersList[1].links.forEach((imgUrl, idx) => {
+                        gallerySksk.appendChild(createChapterCard(imgUrl, 1, idx, allChaptersList[1].name));
+                    });
+                } else {
+                    if (secondTitleWrap) secondTitleWrap.style.display = 'none';
+                    gallerySksk.style.display = 'none';
+                }
 
-                const sec = document.createElement('section');
-                sec.className = 'gallery-grid';
+                // ৩য় চ্যাপ্টার থেকে বাকি সব চ্যাপ্টার
+                allChaptersList.slice(2).forEach((chapter, sliceIdx) => {
+                    const realChapterIdx = sliceIdx + 2;
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left';
+                    titleDiv.innerHTML = `<h2 class="text-white text-2xl font-light opacity-80">${chapter.name}</h2>`;
+                    extraContainer.appendChild(titleDiv);
 
-                chapter.links.forEach((imgUrl, idx) => {
-                    const globalIndex = images.length;
-                    images.push(imgUrl);
-                    sec.appendChild(createPhotoCard(imgUrl, globalIndex, idx, chapter.name));
+                    const sec = document.createElement('section');
+                    sec.className = 'gallery-grid';
+
+                    chapter.links.forEach((imgUrl, idx) => {
+                        sec.appendChild(createChapterCard(imgUrl, realChapterIdx, idx, chapter.name));
+                    });
+
+                    extraContainer.appendChild(sec);
                 });
+            } else {
+                // শুধুমাত্র সিলেক্ট করা চ্যাপ্টারের (যেমন CH 1 বা CH 2) ছবিগুলো দেখানো হবে
+                const selectedChapter = allChaptersList[activeFilterChapterIdx];
+                if (!selectedChapter) return;
 
-                extraContainer.appendChild(sec);
-            });
+                if (firstTitleWrap) firstTitleWrap.style.display = 'block';
+                if (firstTitleEl) firstTitleEl.textContent = selectedChapter.name;
+                if (secondTitleWrap) secondTitleWrap.style.display = 'none';
+                gallerySksk.style.display = 'none';
+
+                selectedChapter.links.forEach((imgUrl, idx) => {
+                    gallery.appendChild(createChapterCard(imgUrl, activeFilterChapterIdx, idx, selectedChapter.name));
+                });
+            }
+        }
+
+        function initGallery() {
+            allChaptersList = buildAllChaptersList();
+            renderFilterButtons();
+            renderGalleryView();
         }
 
         // ৫. ফুলস্ক্রিন স্লাইডার এবং HD ইমেজ লোডার
@@ -537,8 +661,13 @@ const gallery = document.getElementById('gallery');
             setImgWithFallback(fsNextImg, images[nextIndex]);
         }
 
-        function openFullscreen(index) {
-            currentIdx = index;
+        // যে চ্যাপ্টারের ছবিতে ক্লিক করা হবে, ফুলস্ক্রিন ও Auto Play শুধুমাত্র ওই চ্যাপ্টারের ছবিগুলোর মধ্যেই ঘুরবে
+        function openFullscreen(chapterIdx, photoIdxInChapter) {
+            const targetChapter = allChaptersList[chapterIdx];
+            if (!targetChapter || !targetChapter.links.length) return;
+
+            images = [...targetChapter.links];
+            currentIdx = photoIdxInChapter;
             overlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             syncSliderImages();
