@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XsXX - Photo Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+                        url('https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg') no-repeat center center fixed;
+            background-size: cover;
+            scroll-behavior: smooth;
+        }
+
+        .main-title {
+            font-family: 'Bebas+Neue', cursive;
+            letter-spacing: 5px;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .photo-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .photo-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        #fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+        }
+
+        #fullscreen-img {
+            max-width: 90%;
+            max-height: 90%;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1100;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid white;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: white;
+            color: black;
+        }
+
+        #scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 500;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="text-center pt-10 pb-4">
+        <h1 class="main-title text-white text-7xl md:text-9xl mb-2">XsXX</h1>
+        <div class="w-full max-w-6xl mx-auto px-6 text-left">
+            <h2 class="text-white text-2xl font-light opacity-80">সানি লিওন</h2>
+        </div>
+    </header>
+
+    <main class="gallery-grid" id="gallery"></main>
+
+    <div class="w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left">
+        <h2 class="text-white text-2xl font-light opacity-80">মিয়াঁ খলিফা</h2>
+    </div>
+    <section class="gallery-grid" id="gallery-sksk"></section>
+
+    <div id="fullscreen-overlay">
+        <div class="controls">
+            <div id="autoplay-btn" class="btn">Auto Play: OFF</div>
+            <div onclick="closeFullscreen()" class="btn">Close</div>
+        </div>
+        <img id="fullscreen-img" src="" alt="Fullscreen View">
+    </div>
+
+    <div id="scroll-top" onclick="window.scrollTo(0,0)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </div>
+
+    <script>
+        // --- আপনি নিচে এই লিস্টে আপনার ছবির লিঙ্কগুলো বসিয়ে দিন ---
+        const imageLinks = [
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHU335egliY07pAjIcw1PKB8r9vbuXGSiBleCnOjvNeqXletG7G0NTJxFw&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2WvdDJ7KFiqXw4D4fpsx5DE6CuLHmq6BK3NP58m1KZC3CJFSH5opnrF0&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmLLX2519UlUuyG_NRNwCYPVQUST5E_tG3fCOboxPz7A&s",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCgoPv5Zs0VtXImFaLvlugSOnIL4PQne006Ntcw4xoHaRSgF3Wwbh1JIA&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNcvNt5_zgsvtsMWmnt3QQkIL-CLQsLIco_Q3gj_V_dA&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvZicN4vd7wSLN28wEfmCYoDY3x-_BinRXc3ixWPxIyA&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjVzIMlLwpSM1pMkp8kRS80_je4N0ozRCt6ccc1tVvSQYv16-4ITKHiANx&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDD2Eufs0x3bdlgEpWmMBVHQsPfdt00AZzpnIEntrnZQ&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQI0m74lk14Q5DObomvkw8XyROvaxiEdcdoI_kq_hukAg&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKBCKN_LgyVOpqHpqGZPR5o73NF3MgWsDQHRXUgp9RR_mnmYzfCXm9zPY&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRztcgLSfKaiYk_7dQxjxxWSIclLx_p3g03Okw2xgQJjrb9XVW1C8zCyD4&s=10",
+"https://x.jjj.cam/pics/openlife/sunny-leone/foto-indian-4porn/sunny-leone-1.jpg",
+"https://x.uuu.cam/pics/vivid/sunny-leone/erotic-hardcore-sets/hd-sunny-leone-4.jpg",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkWCeiuF3fmYE_d3U59ycoNLq4RqNfsA2H3YHQP7N7mw&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgVM7kL62zJbhdzKV-zrwwST_c6AVXxtmEpk68tXlSAnRD-nDjSM9-amY&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYpr1kv-Is3HVVGChPOvXW9lP3WoqbGfb7dne_QrCTDQzsN6rs3f7GfUnJ&s=10",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4iIkyts_k4nb59qnVcYjltIWJ6I6QmzGtrpnD2mH8d3Dibe0LgiXJKls&s=10",
+            "https://www.fappenist.com/Uploads/Media/May22/Mon09/12625/e2db6a60.jpg",
+            "https://lh4.googleusercontent.com/proxy/Ls2rIxE2689fYsly8jB7TmXpAAsh5uGEBrpO_spLvGl7WzcQP2DyeUQ3_tdF5D7QuTHQ7RCUhebzAAWj-UZSPu8EjmaD9zj5aNWSNKKYIfUttw-OpdBL",
+            "https://img5.hotnessrater.com/3554188/sunny-leone-porn.jpg?w=4000&h=6000",
+            "https://cdni.pornpics.com/460/7/171/82673159/82673159_040_23ba.jpg",
+            "https://cdni.pornpics.com/460/1/286/38863254/38863254_012_6be1.jpg",
+            "https://poster.hdpornos.xxx/thumbs/15/15789/poster.jpg",
+            "https://static-ca-cdn.eporner.com/gallery/JD/M7/XbEUSoTM7JD/13100176-sunny-leone-05-1-nude.jpg",
+            "https://www.faponhd.com/contents/videos_screenshots/4000/4403/preview.jpg",
+            "https://cdnwg7.youx.xxx/galleries/gthumb/1/642/1642985_24a867b_320x_.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTggc0RyTXbluiokvwaTM3TK4ZazK_00TOIPd58WSqXgA-I404qKZWcawUO&s=10",
+            "https://www.fappenist.com/Uploads/Media/May22/Mon09/12625/9b70258d.jpg",
+            "https://x.uuu.cam/pics/openlife/sunny-leone/fully-milf-ddfprod/sunny-leone-1.jpg",
+"https://x.uuu.cam/pics/openlife/sunny-leone/ultra-undressing-newsletter/sunny-leone-1.jpg",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwSFldiiZUwm5xPrm_dh9H3wN1FbHcvvnV7A&s",
+"https://cdn.milfporn.tv/12/102/85389584/1_460.jpg",
+"https://cdni.pornpics.com/460/7/173/19724579/19724579_084_53bc.jpg",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpYGATJpHudKcNeZGUuek3dfYss7L4RPZsLw&s",
+"https://www.bollynudez.com/wp-content/uploads/2019/02/sunny-leone-ki-chut-sexy-chudai.jpg",
+"https://ic-vt-nss.xhcdn.com/a/MDRkNjczN2EwN2JhNzI0NmI2ZDBiMGNkMGJlYThjYzI/s(w:2560,h:1440),webp/018/744/537/v2/2560x1440.211.webp",
+"https://thumb-cdn77.xvideos-cdn.com/84b8c121-52e2-43f2-baa5-49a2df01e5d8/0/xv_19_t.jpg",
+"https://img.letsporn.com/contents/videos_screenshots/10000/10279/preview_preview.mp4.jpg",
+"https://cdn.fuckmoral.com/new-thumbs/8b/aa/e9/2230567761/1_640x360.webp",
+"https://static-ca-cdn.eporner.com/thumbs/static4/1/10/107/10730631/8_360.jpg",
+"https://www.bollynudez.com/wp-content/uploads/2019/02/bade-boobs-wali-sunny-leone.jpg",
+"https://www.bollynudez.com/wp-content/uploads/2019/07/sunny-hot-pussy.jpg",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1TvDQMJb4IOh9vQYqLo38BSyGUJ99fCG0Go2KLTd1EA&s=10",
+"https://ic-ph-nss.xhcdn.com/a/YTQzNWU5M2JiNTljNGNiMGM4NDgwZDI2ZjZlMDA3NzI/webp/000/077/359/663_1000.jpg",
+"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgLzn2EGaA2ac8P6LfyN5v2vKO3s-2wscGct7Bx3NWGBcqrCFWVm02ZTiB&s=10",
+"https://cdnwg7.youx.xxx/galleries/gthumb/1/657/1657711_23bee6c_320x_.jpg",
+
+
+
+
+            // এভাবে কমা দিয়ে আরও লিঙ্ক যোগ করতে পারবেন
+        ];
+
+// --- SKSK চ্যাপ্টারের ছবির লিঙ্কগুলো নিচে কমা দিয়ে বসিয়ে দিন ---
+        const skskImageLinks = [
+            "https://cdnxw17.youx.xxx/gthumb/2/216/2216490_498b96c_320x_.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQpN8C7UAuQ51XtcDXcvlUJyfsnlCgnySVzovxCXqJKw&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAEjRAMxPVSDqyyh21qIhyeyWu4zglnh7OFeXiQB967Q&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzS2vQ4_jhAJIRbk2hjkSyskgAEJuwN0JAuB0VbHiAqw&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfUa2Xp7YFRnhhDi34GC4N9UwkSImnf_iBgzV_ZC_O9g&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR678rKKPua-sntciSbBwNaYIltrhqzZ_hnjYaKSKwciQ&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQx_qfFhfK2zy7t5Qqk9_nJoQSkGQTwE2jwLbcUA1cE2cpaDuglXOkwMyc&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXYp5cWDK3jieBcIZ4SyqEolb-qw3IWJOQXiZvsGIz-A&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbquKlEwr0Fb3bEhpf47pCXssVUg65kI1KBQ1qUOkCzQ&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf6fJO7rlht_jtnx2uuLC0thAPEfIKl2iw9q6rhJceLQ&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTodNcJEWGcXa-m2Jc026SgId1wkgAf0lLstxWzZ3NkpQ&s=10",
+            "https://thumb-cdn77.xnxx-cdn.com/a29e9a84-db5e-44db-a031-f4fff3cf9ae8/0/xn_30_p.jpg",
+            // এখানে আগের মতোই কমা দিয়ে SKSK চ্যাপ্টারের সব ছবির লিঙ্ক যোগ করতে পারবেন
+        ];
+// --- ৩য় চ্যাপ্টার থেকে শুরু করে পরপর নতুন যত খুশি চ্যাপ্টার এখানে যোগ করুন ---
+        const moreChapters = [
+            {
+                name: "সেরা কিছু",
+                links: [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5o0c4MrMTK96QZeKMtx-YZTywAkEnq6BwvN8QYCtf-ySZtzUEdrwrNvo&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUowvyTJps3_Acxwfefu5DkwS4t-l5GRZY1oixJqEJ0A&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuvB8R_sUSi55FCHj-gOTuNF4K2PQXI4sstPJo2qR-Tg&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRmUVSr3VecAnKaTwTjbm1M7hvNUkWhhIq3N-Jltu8tg&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj9svOBwIUmPGsm4P2Tmx-W1a9HO7m4y5l8CPnFUZJRA&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlxzESJyGGESGRViixDdTCp68GQuxbMab-fS8f8V8rAg&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpgAdzBxbhfjkVra6Sv7hStYt2cGKt_tavUCVzL_sN0A&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwrjsuZdMp8Et82C7uMPpmGIbsg6xhUGmVkJAbdqpOkw&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJVPDOtyc-06JoxYovtJlQDPctLZVAccv-o8hcEBZm6l9OKV3U1NmanH4&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjO2JIOifrpShOjKc6jl_1Ke5pS6ey1aH2RU-zgkRCKg&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ajXNcllrcceD9PEhIiRaa-_CR_H9C362fy9E5p00CQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2MYsDssPH97lNzji_r3ulzIrgFXCpKdWYLJoLTmFnkQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn9PdyFzvr-ocyywBmWUDkpOGHVd6J-B_NB_vvuApBBg&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThm1c1EnRzbNZhsIi-VMtioL-sjJrnRTMxfRg3LxCwQ8Rzp8V0VWG4I8E&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPA99ionJ6DouIrbI_ahpLk0p27mKRA4u-58yuJmtVMA&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGE-udZhK8ElPhrr7_RT4EB5c7pTUa3dcYzg0wvI0BFbmjMWTx1VQzUo4&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfDMhdfy0xEBt2XyseyZffrAXIVyiTb2meiLyWAGx7uw&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxTSrLC_JeMHZ1nPiw9lDFs-Z19sY5OLpEpDRqz_yaSA&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGLXqWWQ3SqS0Czt5GEqdFOxESCnYKGSOeybLhiXaE7w&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_G5UB72NAXibOyJpphF-ea-m05drYgFLfvFyp1RWHOw&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBAzvdcvyjw_PjeaOddEDFiBOtXX4qzPzDV5hAi7eZ0Q&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR2mr-4cUPrBVEhfE4AF7_uKS4z29-373pHkkSeYAsXQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI2UFZoo6ACakxfjnUHphOizmfe26OPVQJNS_EhNJ6ow&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS6iLyyXUkCdnskSKQN-zQlC5XLS1mbC6yT9JKm7f1eQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJvLkD-ej_OLIEmQZ0BPR-Ms6cTkUwOnpXYXmbQeZnMQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXNEYlSn16iJ5UkKsrBY4KvyFun4FD9c2f3gjYsG3olQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY1lXP6_Sdi1wOyacnDRJv3jI8KfMoZ_SUGVlfy86uVw&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg9TWGhQpGGGhO6bRtoNEQIPlcBFcyuJUfr1fRpBBpNw&s=10",
+                    "https://cdni.pornpics.com/460/7/553/83551229/83551229_128_adbc.jpg",
+                    "https://cdni.pornpics.com/460/7/524/20859229/20859229_093_b48b.jpg",
+                    "https://cdni.pornpics.com/460/7/797/78533847/78533847_146_fd98.jpg",
+                    "https://cdni.pornpics.com/460/1/344/27126556/27126556_007_05ec.jpg",
+                    "https://cdni.pornpics.com/460/7/536/40436743/40436743_065_1b33.jpg",
+                    "https://cdni.pornpics.com/460/7/629/28967605/28967605_154_909d.jpg",
+                    "https://cdni.pornpics.com/460/7/256/54076961/54076961_011_09a1.jpg",
+                    "https://cdni.pornpics.com/460/7/301/50337383/50337383_057_23da.jpg",
+                    "https://cdni.pornpics.com/460/7/91/62499127/62499127_021_7ce5.jpg",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT-XCLlnIA5fm8TzpE7CC5isggk2Q86s6_dFex3XxScQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQI2LPj68TdHTANeT6TvMJntl4iRmuyWUVgKXoTF2HPdg&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS98i4dM4jaOv5fs_fTveM3b9JPMGimx5ox0l6RF5AVlg&s=10",
+                    "https://ic-vt-nss.xhcdn.com/a/MzVhMmMwZTRmY2EyYzcyNDIzMTQxZjFiMzhiYjU0MjQ/s(w:2560,h:1440),webp/030/463/339/v2/2560x1440.203.webp",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHFJRx6S3Nizd6ufnIfUPDGu38KFMuH2gQ7yqSpYCO9g&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyIdmhc1RCMzjp-jsgWqdxLIy1QCn475tpIvAS5YLDNg&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIf55MzTzkwRAyTCwe7NjSDnqtm_vERv7nVwDMZg7UMQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHcxNYQPx5a-VWft13zqzPs7ZvFZMjy70kU9AJL0KkbQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQitBNDnZXamQvEmGc-JKcAwjgW8q7FB9lujwd5MwNqCQ&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs8AH-2NE5MoUwcdLZvLEd7HxwRzykhubnS_YOV13HrA&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcVCiiPLzqiGe68zj1kBjBZH2wgemRU_ZFsg12xoYe7w&s=10",
+                    
+                   
+                    // এখানে কমা দিয়ে SKSK চ্যাপ্টারের সব ছবির লিঙ্ক বসান
+                ]
+            },
+            // ৪র্থ বা তার পরের চ্যাপ্টার খুলতে শুধু নিচের মতো আরেকটি ব্লক কপি করে এখানে বসিয়ে দেবেন:
+            {
+                name: "alyx star",
+                links: [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPR-Ktx0rkpqSjRL4TDhKcjN5gvXgi_q-VUnjaf0zyrw&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdXydq1BA9CtSrIPBj-K7OSM1ro0L-EgK7OsVV7pP89Q&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEPhbsd_5XCOQ0gNZbXJdpQxATDTkhu0bQvzjZyhpOAA&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkPOTiryWbagHiNCr8zAf2cfyGZxvAAfZnACJcSZsGsg&s=10",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOc650IIijp7Iqk28tKQydj2MsxtcezXTSzbVC1pycIA&s=10",
+                ]
+            },
+            
+        ];
+
+        const gallery = document.getElementById('gallery');
+        const gallerySksk = document.getElementById('gallery-sksk');
+        const overlay = document.getElementById('fullscreen-overlay');
+        const fsImg = document.getElementById('fullscreen-img');
+        const scrollTop = document.getElementById('scroll-top');
+        const autoPlayBtn = document.getElementById('autoplay-btn');
+
+        let currentIdx = 0;
+        let images = [];
+        let isAutoPlaying = false;
+        let autoPlayInterval;
+        let scale = 1;
+        let startX = 0;
+
+        // আগের ২টা চ্যাপ্টার + নতুন সব চ্যাপ্টারের ছবির কার্ড জেনারেট করা
+        function initGallery() {
+            images = [...imageLinks, ...skskImageLinks];
+            gallery.innerHTML = '';
+            gallerySksk.innerHTML = '';
+
+            // ১ম চ্যাপ্টারের ছবি সাজানো (আগের মতোই থাকবে)
+            imageLinks.forEach((imgUrl, index) => {
+                const card = document.createElement('div');
+                card.className = 'photo-card fade-in';
+                card.innerHTML = `<img src="${imgUrl}" alt="Photo ${index + 1}" loading="lazy">`;
+                card.onclick = () => openFullscreen(index);
+                gallery.appendChild(card);
+            });
+
+            // ২য় চ্যাপ্টারের ছবি সাজানো (আগের মতোই থাকবে)
+            skskImageLinks.forEach((imgUrl, index) => {
+                const card = document.createElement('div');
+                card.className = 'photo-card fade-in';
+                const globalIndex = imageLinks.length + index;
+                card.innerHTML = `<img src="${imgUrl}" alt="Photo ${index + 1}" loading="lazy">`;
+                card.onclick = () => openFullscreen(globalIndex);
+                gallerySksk.appendChild(card);
+            });
+
+            // ৩য় চ্যাপ্টার ও তার পরের নতুন চ্যাপ্টারগুলো ২য় চ্যাপ্টারের ঠিক নিচে সাজানো
+            let extraContainer = document.getElementById('extra-chapters-container');
+            if (!extraContainer) {
+                extraContainer = document.createElement('div');
+                extraContainer.id = 'extra-chapters-container';
+                gallerySksk.insertAdjacentElement('afterend', extraContainer);
+            }
+            extraContainer.innerHTML = '';
+
+            moreChapters.forEach((chapter) => {
+                // চ্যাপ্টারের নাম
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left';
+                titleDiv.innerHTML = `<h2 class="text-white text-2xl font-light opacity-80">${chapter.name}</h2>`;
+                extraContainer.appendChild(titleDiv);
+
+                // চ্যাপ্টারের ছবির গ্রিড
+                const sec = document.createElement('section');
+                sec.className = 'gallery-grid';
+
+                chapter.links.forEach((imgUrl, idx) => {
+                    const globalIndex = images.length;
+                    images.push(imgUrl);
+
+                    const card = document.createElement('div');
+                    card.className = 'photo-card fade-in';
+                    card.innerHTML = `<img src="${imgUrl}" alt="${chapter.name} ${idx + 1}" loading="lazy">`;
+                    card.onclick = () => openFullscreen(globalIndex);
+                    sec.appendChild(card);
+                });
+
+                extraContainer.appendChild(sec);
+            });
+        }
+        function openFullscreen(index) {
+            currentIdx = index;
+            fsImg.src = images[currentIdx];
+            overlay.style.display = 'flex';
+            scale = 1;
+            fsImg.style.transform = `scale(${scale})`;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFullscreen() {
+            overlay.style.display = 'none';
+            stopAutoPlay();
+            document.body.style.overflow = 'auto';
+        }
+
+        fsImg.addEventListener('dblclick', closeFullscreen);
+
+        function nextImg() {
+            currentIdx = (currentIdx + 1) % images.length;
+            updateFsImage();
+        }
+
+        function prevImg() {
+            currentIdx = (currentIdx - 1 + images.length) % images.length;
+            updateFsImage();
+        }
+
+        function updateFsImage() {
+            fsImg.style.opacity = 0;
+            setTimeout(() => {
+                fsImg.src = images[currentIdx];
+                fsImg.style.opacity = 1;
+            }, 200);
+        }
+
+        overlay.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+        overlay.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) nextImg();
+                else prevImg();
+            }
+        });
+
+        overlay.addEventListener('wheel', e => {
+            e.preventDefault();
+            scale += e.deltaY * -0.001;
+            scale = Math.min(Math.max(.5, scale), 4);
+            fsImg.style.transform = `scale(${scale})`;
+        });
+
+        function toggleAutoPlay() {
+            if (isAutoPlaying) stopAutoPlay();
+            else startAutoPlay();
+        }
+
+        function startAutoPlay() {
+            isAutoPlaying = true;
+            autoPlayBtn.innerText = "Auto Play: ON";
+            autoPlayInterval = setInterval(nextImg, 3000);
+        }
+
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            autoPlayBtn.innerText = "Auto Play: OFF";
+            clearInterval(autoPlayInterval);
+        }
+
+        autoPlayBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleAutoPlay();
+        };
+
+        overlay.onclick = (e) => {
+            if (e.target === overlay || e.target === fsImg) {
+                if (isAutoPlaying) stopAutoPlay();
+            }
+        };
+
+        window.onscroll = () => {
+            if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+                scrollTop.style.display = "flex";
+            } else {
+                scrollTop.style.display = "none";
+            }
+        };
+
+        // গ্যালারি চালু করা
+        initGallery();
+
+    </script>
+</body>
+</html>
