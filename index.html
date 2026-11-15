@@ -4,22 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XsXX - Photo Gallery</title>
+  <title>XsXX - Photo Gallery</title>
+    <!-- ট্যাবের উপরে ওয়ালপেপারের মুখের জুমিং পয়েন্ট আইকন (Favicon) -->
+    <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Ccircle cx='32' cy='32' r='30'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Cimage href='https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg' width='150' height='150' x='-43' y='-10' preserveAspectRatio='xMidYMid slice'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='30' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
+        /* কোনো টেক্সট বা ছবি যেন কেউ সিলেক্ট বা কপি করতে না পারে */
+        *, *::before, *::after {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-                        url('https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg') no-repeat center center fixed;
+            background-color: #0b0b0f;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* মোবাইল ও ডেস্কটপে ল্যাগ ছাড়া মাখনের মতো স্মুথ স্ক্রলিংয়ের জন্য ফিক্সড GPU ব্যাকগ্রাউন্ড লেয়ার */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)),
+                        url('https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg') no-repeat center center;
             background-size: cover;
-            scroll-behavior: smooth;
+            z-index: -1;
+            transform: translateZ(0);
+            will-change: transform;
+            pointer-events: none;
+        }
+
+        img {
+            -webkit-user-drag: none;
+            user-drag: none;
+            pointer-events: auto;
         }
 
         .main-title {
-            font-family: 'Bebas+Neue', cursive;
+            font-family: 'Bebas Neue', cursive;
             letter-spacing: 5px;
             text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
         }
@@ -31,48 +68,97 @@
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
+            content-visibility: auto;
+            contain-intrinsic-size: 400px;
         }
 
+        /* স্মুথ এন্ট্রান্স অ্যানিমেশন ও হাই-পারফরম্যান্স গ্লাস কার্ড */
         .photo-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            border-radius: 12px;
+            background: rgba(25, 25, 35, 0.55);
+            border-radius: 14px;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transform: translateY(28px) scale(0.92);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.35s ease,
+                        opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform, opacity;
+        }
+
+        .photo-card.card-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .photo-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.45);
+            border-color: rgba(255, 255, 255, 0.45);
         }
 
         .photo-card img {
             width: 100%;
             height: 200px;
             object-fit: cover;
+            display: block;
+            backface-visibility: hidden;
+            transform: translateZ(0);
         }
 
+        /* ফুলস্ক্রিন ওভারলে: কালো না রেখে ডিফল্ট ব্যাকগ্রাউন্ড হালকা ঘোলা (Frosted Blur) দেখানো */
         #fullscreen-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: rgba(10, 10, 16, 0.38);
+            backdrop-filter: blur(18px) saturate(135%);
+            -webkit-backdrop-filter: blur(18px) saturate(135%);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
             touch-action: none;
         }
 
-        #fullscreen-img {
-            max-width: 90%;
-            max-height: 90%;
-            transition: transform 0.3s ease;
+        /* গ্যালারি সোয়াইপ ট্র্যাক — ফোনে আঙুল দিয়ে টানলে স্লাইড হতে দেখা যাবে */
+        #fs-slider-track {
+            display: flex;
+            align-items: center;
+            width: 300vw;
+            height: 100dvh;
+            transform: translate3d(-100vw, 0, 0);
+            will-change: transform;
+        }
+
+        .fs-slide {
+            width: 100vw;
+            height: 100dvh;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ছবি উপর থেকে নিচ পর্যন্ত একদম ফুল স্ক্রিনে ফিট ও HD শার্পনেসে আসবে */
+        .fs-slide-img {
+            width: 100vw;
+            height: 100dvh;
+            max-width: 100vw;
+            max-height: 100dvh;
+            object-fit: contain;
             user-select: none;
+            -webkit-user-drag: none;
+            image-rendering: -webkit-optimize-contrast;
+            filter: contrast(1.03) saturate(1.04);
+            transform-origin: center center;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
         }
 
         .controls {
@@ -85,13 +171,16 @@
         }
 
         .btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
-            border: 1px solid white;
+            border: 1px solid rgba(255, 255, 255, 0.75);
             font-size: 14px;
+            transition: all 0.25s ease;
         }
 
         .btn:hover {
@@ -103,26 +192,16 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.35);
             z-index: 500;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.8s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -136,9 +215,8 @@
     </header>
 
     <main class="gallery-grid" id="gallery"></main>
-
-    <div class="w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left">
-        <h2 class="text-white text-2xl font-light opacity-80">মিয়াঁ খলিফা</h2>
+<div class="w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left">
+        <h2 id="second-chapter-title" class="text-white text-2xl font-light opacity-80">alyx star</h2>
     </div>
     <section class="gallery-grid" id="gallery-sksk"></section>
 
@@ -147,9 +225,12 @@
             <div id="autoplay-btn" class="btn">Auto Play: OFF</div>
             <div onclick="closeFullscreen()" class="btn">Close</div>
         </div>
-        <img id="fullscreen-img" src="" alt="Fullscreen View">
+        <div id="fs-slider-track">
+            <div class="fs-slide"><img id="fs-prev-img" class="fs-slide-img" src="" alt="Previous View"></div>
+            <div class="fs-slide"><img id="fullscreen-img" class="fs-slide-img" src="" alt="Fullscreen View"></div>
+            <div class="fs-slide"><img id="fs-next-img" class="fs-slide-img" src="" alt="Next View"></div>
+        </div>
     </div>
-
     <div id="scroll-top" onclick="window.scrollTo(0,0)">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </div>
@@ -298,10 +379,14 @@
             
         ];
 
-        const gallery = document.getElementById('gallery');
+const gallery = document.getElementById('gallery');
         const gallerySksk = document.getElementById('gallery-sksk');
+        const secondChapterTitle = document.getElementById('second-chapter-title');
         const overlay = document.getElementById('fullscreen-overlay');
+        const sliderTrack = document.getElementById('fs-slider-track');
+        const fsPrevImg = document.getElementById('fs-prev-img');
         const fsImg = document.getElementById('fullscreen-img');
+        const fsNextImg = document.getElementById('fs-next-img');
         const scrollTop = document.getElementById('scroll-top');
         const autoPlayBtn = document.getElementById('autoplay-btn');
 
@@ -311,33 +396,85 @@
         let autoPlayInterval;
         let scale = 1;
         let startX = 0;
+        let currentDragX = 0;
+        let isDragging = false;
+        let isAnimatingSlide = false;
 
-        // আগের ২টা চ্যাপ্টার + নতুন সব চ্যাপ্টারের ছবির কার্ড জেনারেট করা
+        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট ও ড্র্যাগ সম্পূর্ণ বন্ধ করা
+        ['contextmenu', 'copy', 'cut', 'selectstart', 'dragstart'].forEach(evt => {
+            document.addEventListener(evt, e => e.preventDefault());
+        });
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && ['c', 'a', 'x', 'u', 's'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+            }
+        });
+
+        // ২. ফুলস্ক্রিনে ছবির রেজোলিউশন যতটা সম্ভব HD করার ফাংশন
+        function getHdImageUrl(url) {
+            if (!url) return '';
+            return url
+                .replace(/_320x_\.jpg$/i, '_1280x_.jpg')
+                .replace(/\/460\//g, '/1280/');
+        }
+
+        // ৩. স্ক্রল ও লোডিংয়ের সময় ছবিগুলো সুন্দর অ্যানিমেশনের সাথে ভেসে ওঠার সিস্টেম
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const card = entry.target;
+                    const delay = (Number(card.dataset.animIndex || 0) % 10) * 55;
+                    setTimeout(() => {
+                        card.classList.add('card-visible');
+                    }, delay);
+                    cardObserver.unobserve(card);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px 60px 0px' });
+
+        function createPhotoCard(imgUrl, globalIndex, localIndex, labelPrefix) {
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            card.dataset.animIndex = localIndex;
+            card.innerHTML = `<img src="${imgUrl}" alt="${labelPrefix} ${localIndex + 1}" loading="lazy" decoding="async">`;
+            card.onclick = () => openFullscreen(globalIndex);
+            cardObserver.observe(card);
+            return card;
+        }
+
+        // ৪. আপনার দেওয়া নতুন সিরিয়াল অনুযায়ী সব চ্যাপ্টার সাজানো:
+        // ১ম: সানি লিওন | ২য়: alyx star | ৩য়: মিয়াঁ খলিফা | ৪র্থ (শেষ): সেরা কিছু
         function initGallery() {
-            images = [...imageLinks, ...skskImageLinks];
+            images = [];
             gallery.innerHTML = '';
             gallerySksk.innerHTML = '';
 
-            // ১ম চ্যাপ্টারের ছবি সাজানো (আগের মতোই থাকবে)
+            // ১ম চ্যাপ্টার: সানি লিওন
             imageLinks.forEach((imgUrl, index) => {
-                const card = document.createElement('div');
-                card.className = 'photo-card fade-in';
-                card.innerHTML = `<img src="${imgUrl}" alt="Photo ${index + 1}" loading="lazy">`;
-                card.onclick = () => openFullscreen(index);
-                gallery.appendChild(card);
+                const globalIndex = images.length;
+                images.push(imgUrl);
+                gallery.appendChild(createPhotoCard(imgUrl, globalIndex, index, 'Photo'));
             });
 
-            // ২য় চ্যাপ্টারের ছবি সাজানো (আগের মতোই থাকবে)
-            skskImageLinks.forEach((imgUrl, index) => {
-                const card = document.createElement('div');
-                card.className = 'photo-card fade-in';
-                const globalIndex = imageLinks.length + index;
-                card.innerHTML = `<img src="${imgUrl}" alt="Photo ${index + 1}" loading="lazy">`;
-                card.onclick = () => openFullscreen(globalIndex);
-                gallerySksk.appendChild(card);
+            // চ্যাপ্টারগুলো খুঁজে বের করা
+            const alyxChapter = moreChapters.find(ch => ch.name.trim().toLowerCase() === 'alyx star');
+            const seraKichuChapter = moreChapters.find(ch => ch.name.trim() === 'সেরা কিছু');
+            const otherCustomChapters = moreChapters.filter(
+                ch => ch !== alyxChapter && ch !== seraKichuChapter
+            );
+
+            // ২য় চ্যাপ্টার: alyx star (আগের ৪র্থ চ্যাপ্টারটি এখানে ২য় স্থানে বসবে)
+            const secondChapterData = alyxChapter || { name: 'alyx star', links: [] };
+            if (secondChapterTitle) {
+                secondChapterTitle.textContent = secondChapterData.name;
+            }
+            secondChapterData.links.forEach((imgUrl, index) => {
+                const globalIndex = images.length;
+                images.push(imgUrl);
+                gallerySksk.appendChild(createPhotoCard(imgUrl, globalIndex, index, secondChapterData.name));
             });
 
-            // ৩য় চ্যাপ্টার ও তার পরের নতুন চ্যাপ্টারগুলো ২য় চ্যাপ্টারের ঠিক নিচে সাজানো
+            // পরবর্তী চ্যাপ্টারগুলোর কন্টেইনার
             let extraContainer = document.getElementById('extra-chapters-container');
             if (!extraContainer) {
                 extraContainer = document.createElement('div');
@@ -346,38 +483,65 @@
             }
             extraContainer.innerHTML = '';
 
-            moreChapters.forEach((chapter) => {
-                // চ্যাপ্টারের নাম
+            // ৩য় চ্যাপ্টার: মিয়াঁ খলিফা + অন্য কোনো নতুন চ্যাপ্টার থাকলে সেগুলো + সবার শেষে 'সেরা কিছু'
+            const orderedRemainingChapters = [
+                { name: 'মিয়াঁ খলিফা', links: skskImageLinks },
+                ...otherCustomChapters
+            ];
+            if (seraKichuChapter) {
+                orderedRemainingChapters.push(seraKichuChapter);
+            }
+
+            orderedRemainingChapters.forEach((chapter) => {
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left';
                 titleDiv.innerHTML = `<h2 class="text-white text-2xl font-light opacity-80">${chapter.name}</h2>`;
                 extraContainer.appendChild(titleDiv);
 
-                // চ্যাপ্টারের ছবির গ্রিড
                 const sec = document.createElement('section');
                 sec.className = 'gallery-grid';
 
                 chapter.links.forEach((imgUrl, idx) => {
                     const globalIndex = images.length;
                     images.push(imgUrl);
-
-                    const card = document.createElement('div');
-                    card.className = 'photo-card fade-in';
-                    card.innerHTML = `<img src="${imgUrl}" alt="${chapter.name} ${idx + 1}" loading="lazy">`;
-                    card.onclick = () => openFullscreen(globalIndex);
-                    sec.appendChild(card);
+                    sec.appendChild(createPhotoCard(imgUrl, globalIndex, idx, chapter.name));
                 });
 
                 extraContainer.appendChild(sec);
             });
         }
+
+        // ৫. ফুলস্ক্রিন স্লাইডার এবং HD ইমেজ লোডার
+        function setImgWithFallback(imgEl, rawUrl) {
+            const hdUrl = getHdImageUrl(rawUrl);
+            imgEl.onerror = () => {
+                imgEl.onerror = null;
+                imgEl.src = rawUrl;
+            };
+            imgEl.src = hdUrl;
+        }
+
+        function syncSliderImages() {
+            if (!images.length) return;
+            const prevIndex = (currentIdx - 1 + images.length) % images.length;
+            const nextIndex = (currentIdx + 1) % images.length;
+
+            sliderTrack.style.transition = 'none';
+            sliderTrack.style.transform = 'translate3d(-100vw, 0, 0)';
+
+            scale = 1;
+            fsImg.style.transform = 'scale(1)';
+
+            setImgWithFallback(fsPrevImg, images[prevIndex]);
+            setImgWithFallback(fsImg, images[currentIdx]);
+            setImgWithFallback(fsNextImg, images[nextIndex]);
+        }
+
         function openFullscreen(index) {
             currentIdx = index;
-            fsImg.src = images[currentIdx];
             overlay.style.display = 'flex';
-            scale = 1;
-            fsImg.style.transform = `scale(${scale})`;
             document.body.style.overflow = 'hidden';
+            syncSliderImages();
         }
 
         function closeFullscreen() {
@@ -388,40 +552,93 @@
 
         fsImg.addEventListener('dblclick', closeFullscreen);
 
+        // পাশের ছবিতে স্লাইড করে যাওয়ার ফাংশন (মোবাইল সোয়াইপ, অটো প্লে ও ল্যাপটপের অ্যারো বাটনের জন্য)
+        function slideToDirection(direction) {
+            if (isAnimatingSlide || !images.length) return;
+            isAnimatingSlide = true;
+
+            sliderTrack.style.transition = 'transform 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
+            if (direction === 'next') {
+                sliderTrack.style.transform = 'translate3d(-200vw, 0, 0)';
+            } else {
+                sliderTrack.style.transform = 'translate3d(0vw, 0, 0)';
+            }
+
+            setTimeout(() => {
+                if (direction === 'next') {
+                    currentIdx = (currentIdx + 1) % images.length;
+                } else {
+                    currentIdx = (currentIdx - 1 + images.length) % images.length;
+                }
+                syncSliderImages();
+                isAnimatingSlide = false;
+            }, 320);
+        }
+
         function nextImg() {
-            currentIdx = (currentIdx + 1) % images.length;
-            updateFsImage();
+            slideToDirection('next');
         }
 
         function prevImg() {
-            currentIdx = (currentIdx - 1 + images.length) % images.length;
-            updateFsImage();
+            slideToDirection('prev');
         }
 
-        function updateFsImage() {
-            fsImg.style.opacity = 0;
-            setTimeout(() => {
-                fsImg.src = images[currentIdx];
-                fsImg.style.opacity = 1;
-            }, 200);
-        }
+        // ৬. ফোনে আঙুল দিয়ে টানলে গ্যালারির মতো ছবিটি সরে যাওয়া ও পরের ছবিটি আসা
+        overlay.addEventListener('touchstart', e => {
+            if (isAnimatingSlide || e.touches.length > 1) return;
+            startX = e.touches[0].clientX;
+            currentDragX = 0;
+            isDragging = true;
+            sliderTrack.style.transition = 'none';
+        }, { passive: true });
 
-        overlay.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
-        overlay.addEventListener('touchend', e => {
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) nextImg();
-                else prevImg();
+        overlay.addEventListener('touchmove', e => {
+            if (!isDragging || scale > 1) return;
+            currentDragX = e.touches[0].clientX - startX;
+            sliderTrack.style.transform = `translate3d(calc(-100vw + ${currentDragX}px), 0, 0)`;
+        }, { passive: true });
+
+        overlay.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            if (scale > 1) return;
+
+            const swipeThreshold = window.innerWidth * 0.16;
+            if (currentDragX < -swipeThreshold) {
+                slideToDirection('next');
+            } else if (currentDragX > swipeThreshold) {
+                slideToDirection('prev');
+            } else {
+                sliderTrack.style.transition = 'transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)';
+                sliderTrack.style.transform = 'translate3d(-100vw, 0, 0)';
+            }
+            currentDragX = 0;
+        });
+
+        // ৭. ল্যাপটপের কিবোর্ডের ডান (ArrowRight) ও বাম (ArrowLeft) বাটনে চাপ দিয়ে ছবি পরিবর্তন
+        window.addEventListener('keydown', e => {
+            if (overlay.style.display === 'flex') {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextImg();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevImg();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeFullscreen();
+                }
             }
         });
 
+        // মাউস হুইল জুম
         overlay.addEventListener('wheel', e => {
             e.preventDefault();
             scale += e.deltaY * -0.001;
-            scale = Math.min(Math.max(.5, scale), 4);
+            scale = Math.min(Math.max(0.5, scale), 4);
             fsImg.style.transform = `scale(${scale})`;
-        });
+        }, { passive: false });
 
         function toggleAutoPlay() {
             if (isAutoPlaying) stopAutoPlay();
@@ -446,22 +663,22 @@
         };
 
         overlay.onclick = (e) => {
-            if (e.target === overlay || e.target === fsImg) {
+            if (e.target === overlay || e.target.classList.contains('fs-slide') || e.target === fsImg) {
                 if (isAutoPlaying) stopAutoPlay();
             }
         };
 
-        window.onscroll = () => {
-            if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+        // বাটার-স্মুথ স্ক্রল শ্রোতা (passive listener)
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
                 scrollTop.style.display = "flex";
             } else {
                 scrollTop.style.display = "none";
             }
-        };
+        }, { passive: true });
 
         // গ্যালারি চালু করা
         initGallery();
-
     </script>
 </body>
 </html>
