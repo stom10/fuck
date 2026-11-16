@@ -356,8 +356,8 @@
 
         #scroll-top {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 96px;
+            right: 26px;
             background: rgba(255, 255, 255, 0.85);
             width: 50px;
             height: 50px;
@@ -369,9 +369,305 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.35);
             z-index: 500;
         }
+
+        /* ===== পিন লক স্ক্রিন ডিজাইন ===== */
+        #pin-lock-screen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: #000000;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow: hidden;
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.45s ease;
+        }
+
+        #pin-lock-screen.unlocked-hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* কালোর ভেতরে আবছা লোগোর ছবি ওয়ালপেপার হিসেবে */
+        #pin-bg-blur-layer {
+            position: absolute;
+            inset: -40px;
+            background-color: #000000;
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: blur(22px) brightness(0.32) contrast(1.1);
+            opacity: 0.45;
+            transform: scale(1.08) translateZ(0);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #pin-lock-screen::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.92) 78%, #000000 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pin-card-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 340px;
+            margin-top: -30px;
+        }
+
+        /* উপরের মাঝখানে গোল লোগো */
+        .pin-logo-ring {
+            width: 118px;
+            height: 118px;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.18), rgba(255,255,255,0.75));
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.18), 0 12px 32px rgba(0, 0, 0, 0.9);
+            margin-bottom: 34px;
+            animation: logoFloat 3.6s ease-in-out infinite;
+        }
+
+        .pin-logo-ring img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            background: #0b0b0f;
+            -webkit-user-drag: none;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* অ্যানিমেটেড পিন ইনপুট বক্স */
+        .pin-input-wrap {
+            position: relative;
+            width: 100%;
+            border-radius: 18px;
+            padding: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0.65), rgba(255,255,255,0.18));
+            background-size: 200% 100%;
+            animation: pinBorderShimmer 3s linear infinite;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+            transition: all 0.25s ease;
+        }
+
+        @keyframes pinBorderShimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        #pin-input-field {
+            width: 100%;
+            height: 58px;
+            border-radius: 16px;
+            background: rgba(12, 12, 16, 0.94);
+            border: none;
+            outline: none;
+            color: #ffffff;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            padding: 0 18px;
+            caret-color: #ffffff;
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
+        #pin-input-field::placeholder {
+            font-size: 14px;
+            letter-spacing: 2px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.48);
+            animation: placeholderPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes placeholderPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.95; }
+        }
+
+        /* ভুল হলে লাল ও কাঁপুনি */
+        .pin-input-wrap.pin-error {
+            background: #ef4444 !important;
+            box-shadow: 0 0 26px rgba(239, 68, 68, 0.85) !important;
+            animation: pinShakeSoft 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
+        }
+
+        .pin-input-wrap.pin-error #pin-input-field {
+            background: rgba(65, 10, 14, 0.95) !important;
+            color: #fecaca;
+        }
+
+        .pin-input-wrap.pin-error-hard {
+            background: #dc2626 !important;
+            box-shadow: 0 0 38px rgba(220, 38, 38, 1) !important;
+            animation: pinShakeHard 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
+        }
+
+        /* সঠিক হলে পুরো বক্স + টিক বাটন সবুজ বাতি হয়ে জ্বলে ওঠা */
+        .pin-input-wrap.pin-success {
+            background: #22c55e !important;
+            box-shadow: 0 0 34px rgba(34, 197, 94, 0.95) !important;
+        }
+
+        .pin-input-wrap.pin-success #pin-input-field {
+            background: rgba(14, 72, 34, 0.95) !important;
+            color: #bbf7d0;
+        }
+
+        @keyframes pinShakeSoft {
+            10%, 90% { transform: translateX(-4px); }
+            20%, 80% { transform: translateX(6px); }
+            30%, 50%, 70% { transform: translateX(-8px); }
+            40%, 60% { transform: translateX(8px); }
+        }
+
+        @keyframes pinShakeHard {
+            10%, 90% { transform: translateX(-8px) rotate(-1deg); }
+            20%, 80% { transform: translateX(10px) rotate(1deg); }
+            30%, 50%, 70% { transform: translateX(-14px) rotate(-1.5deg); }
+            40%, 60% { transform: translateX(14px) rotate(1.5deg); }
+        }
+
+        /* পিন বক্সের নিচে টিক মার্ক (✓) বাটন */
+        #pin-submit-btn {
+            margin-top: 22px;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+            transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+            outline: none;
+        }
+
+        #pin-submit-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.24);
+            border-color: #ffffff;
+            transform: scale(1.08);
+        }
+
+        #pin-submit-btn:active:not(:disabled) {
+            transform: scale(0.94);
+        }
+
+        #pin-submit-btn.pin-btn-error {
+            background: #dc2626 !important;
+            border-color: #fca5a5 !important;
+            box-shadow: 0 0 26px rgba(239, 68, 68, 0.9) !important;
+        }
+
+        #pin-submit-btn.pin-btn-success {
+            background: #22c55e !important;
+            border-color: #bbf7d0 !important;
+            box-shadow: 0 0 34px rgba(34, 197, 94, 1) !important;
+            transform: scale(1.12);
+        }
+
+        #pin-submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        #pin-lockout-msg {
+            margin-top: 16px;
+            min-height: 22px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #f87171;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* ওয়েবসাইটের নিচের ডান পাশে লাল রঙের কুইক লক বাটন */
+        #quick-lock-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            border: 2.5px solid rgba(255, 255, 255, 0.85);
+            color: #ffffff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 950;
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.65), 0 0 14px rgba(239, 68, 68, 0.45);
+            transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease;
+        }
+
+        #quick-lock-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 26px rgba(220, 38, 38, 0.9), 0 0 22px rgba(255, 255, 255, 0.5);
+        }
+
+        #quick-lock-btn:active {
+            transform: scale(0.92);
+        }
     </style>
 </head>
 <body>
+
+    <!-- ===== পিন লক স্ক্রিন ===== -->
+    <div id="pin-lock-screen">
+        <div id="pin-bg-blur-layer"></div>
+        <div class="pin-card-container">
+            <div class="pin-logo-ring">
+                <img id="pin-logo-img" src="" alt="Logo">
+            </div>
+
+            <div id="pin-input-wrap" class="pin-input-wrap">
+                <input
+                    id="pin-input-field"
+                    type="password"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    maxlength="10"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    placeholder="ENTER PIN"
+                />
+            </div>
+
+            <button id="pin-submit-btn" type="button" aria-label="Unlock">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+
+            <div id="pin-lockout-msg"></div>
+        </div>
+    </div>
+
+    <!-- মূল ওয়েবসাইট (সঠিক পিন না দেওয়া পর্যন্ত লুকানো থাকবে) -->
+    <div id="app-protected-content" style="display: none;">
 
 <header class="text-center pt-10 pb-4">
         <!-- ফন্ট ও সাইজ ঠিক রেখে আশেপাশে স্টাইলিশ ডেকোরেশন -->
@@ -423,9 +719,18 @@
             <div class="fs-slide"><img id="fs-next-img" class="fs-slide-img" src="" alt="Next View"></div>
         </div>
     </div>
-    <div id="scroll-top" onclick="window.scrollTo(0,0)">
+    
+    
+   <div id="scroll-top" onclick="window.scrollTo(0,0)">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </div>
+
+    <!-- ওয়েবসাইটের নিচের ডান পাশে লাল লক বাটন -->
+    <button id="quick-lock-btn" type="button" title="Lock Website (Ctrl + 8)" aria-label="Lock Website">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </button>
+
+    </div><!-- #app-protected-content শেষ -->
 
     <script>
         // --- আপনি নিচে এই লিস্টে আপনার ছবির লিঙ্কগুলো বসিয়ে দিন ---
@@ -632,11 +937,244 @@ const gallery = document.getElementById('gallery');
         let isAnimatingSlide = false;
         let slideReleaseTimer = null;
         const preloadedCache = new Set();
+// ===== পিন ও লোগো সেটিংস (এখানে আপনার পিন এবং লোগোর লিংক বসান) =====
+        const SECRET_PIN = "633038"; // <-- এখানে আপনার আসল পিনটি বসান
+        const PIN_LOGO_URL = "https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg"; // <-- এখানে আপনার গোল লোগোর ছবির লিংক বসান
 
-        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট ও ড্র্যাগ সম্পূর্ণ বন্ধ করা
+        const pinLockScreen = document.getElementById('pin-lock-screen');
+        const pinBgBlurLayer = document.getElementById('pin-bg-blur-layer');
+        const pinLogoImg = document.getElementById('pin-logo-img');
+        const pinInputWrap = document.getElementById('pin-input-wrap');
+        const pinInputField = document.getElementById('pin-input-field');
+        const pinSubmitBtn = document.getElementById('pin-submit-btn');
+        const pinLockoutMsg = document.getElementById('pin-lockout-msg');
+        const appProtectedContent = document.getElementById('app-protected-content');
+        const quickLockBtn = document.getElementById('quick-lock-btn');
+
+        let isAppUnlocked = false;
+        let hasGalleryInitialized = false;
+        let lockoutTicker = null;
+
+        // লোগো ও আবছা ব্যাকগ্রাউন্ড সেট করা
+        if (pinLogoImg) pinLogoImg.src = PIN_LOGO_URL;
+        if (pinBgBlurLayer) pinBgBlurLayer.style.backgroundImage = `url('${PIN_LOGO_URL}')`;
+
+        // প্লেসহোল্ডার এনিমেশন টেক্সট ঘোরানো (কত সংখ্যার পিন তা না বলে)
+        const pinPlaceholders = ["ENTER PIN", "••••••", "UNLOCK"];
+        let phIdx = 0;
+        setInterval(() => {
+            if (!isAppUnlocked && pinInputField && !pinInputField.disabled && !pinInputField.value) {
+                phIdx = (phIdx + 1) % pinPlaceholders.length;
+                pinInputField.placeholder = pinPlaceholders[phIdx];
+            }
+        }, 1600);
+
+        // ব্রাউজারে ভুল চেষ্টা ও লকআউট টাইমার সংরক্ষণ (রিফ্রেশ করলেও কাজ করবে)
+        const LOCK_STORAGE_KEY = 'xsxx_pin_guard_v1';
+        function getGuardState() {
+            try {
+                const raw = localStorage.getItem(LOCK_STORAGE_KEY);
+                if (raw) return JSON.parse(raw);
+            } catch (err) {}
+            return { fails: 0, lockCount: 0, lockUntil: 0 };
+        }
+        function saveGuardState(state) {
+            try {
+                localStorage.setItem(LOCK_STORAGE_KEY, JSON.stringify(state));
+            } catch (err) {}
+        }
+
+        // ৫ বার ভুল = ১ মিনিট (60s), পরের ৫ বার = ৫ মিনিট (300s), তারপর ১০ মিনিট, ১৫ মিনিট...
+        function getLockDurationSeconds(lockCount) {
+            if (lockCount <= 1) return 60;
+            if (lockCount === 2) return 300;
+            return (lockCount - 1) * 300;
+        }
+
+        function updateLockoutUI() {
+            const state = getGuardState();
+            const now = Date.now();
+            if (state.lockUntil > now) {
+                const remainingSec = Math.ceil((state.lockUntil - now) / 1000);
+                const mins = Math.floor(remainingSec / 60);
+                const secs = remainingSec % 60;
+                const timeText = mins > 0
+                    ? `${mins}m ${secs < 10 ? '0' : ''}${secs}s`
+                    : `${secs}s`;
+
+                pinInputField.disabled = true;
+                pinSubmitBtn.disabled = true;
+                pinLockoutMsg.textContent = `অনেকবার ভুল পিন! ${timeText} পর আবার চেষ্টা করুন`;
+
+                if (!lockoutTicker) {
+                    lockoutTicker = setInterval(updateLockoutUI, 500);
+                }
+            } else {
+                if (lockoutTicker) {
+                    clearInterval(lockoutTicker);
+                    lockoutTicker = null;
+                }
+                pinInputField.disabled = false;
+                pinSubmitBtn.disabled = false;
+                if (state.lockUntil !== 0) {
+                    state.lockUntil = 0;
+                    state.fails = 0;
+                    saveGuardState(state);
+                    pinLockoutMsg.textContent = '';
+                }
+            }
+        }
+
+        // পিন বক্সে পেস্ট ও ড্রপ সম্পূর্ণ বন্ধ + শুধু সংখ্যা (সর্বোচ্চ ১০টি) এলাউ করা
+        ['paste', 'drop'].forEach(evt => {
+            pinInputField.addEventListener(evt, e => e.preventDefault());
+        });
+        pinInputField.addEventListener('input', () => {
+            pinInputField.value = pinInputField.value.replace(/\D/g, '').slice(0, 10);
+        });
+        pinInputField.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyPinEntry();
+            }
+        });
+
+        function triggerVibration(pattern) {
+            if (navigator.vibrate) {
+                try { navigator.vibrate(pattern); } catch (err) {}
+            }
+        }
+
+        function verifyPinEntry() {
+            const state = getGuardState();
+            if (state.lockUntil > Date.now()) {
+                updateLockoutUI();
+                return;
+            }
+
+            const entered = pinInputField.value.trim();
+            if (!entered) {
+                pinInputWrap.classList.remove('pin-error', 'pin-error-hard');
+                void pinInputWrap.offsetWidth;
+                pinInputWrap.classList.add('pin-error');
+                triggerVibration(80);
+                return;
+            }
+
+            if (entered === SECRET_PIN) {
+                // সঠিক পিন: বক্স + টিক বাটন সবুজ হয়ে জ্বলে উঠবে ও ভাইব্রেট করে ওয়েবসাইটে ঢোকাবে
+                saveGuardState({ fails: 0, lockCount: 0, lockUntil: 0 });
+                pinLockoutMsg.textContent = '';
+                pinInputWrap.classList.remove('pin-error', 'pin-error-hard');
+                pinSubmitBtn.classList.remove('pin-btn-error');
+                pinInputWrap.classList.add('pin-success');
+                pinSubmitBtn.classList.add('pin-btn-success');
+                triggerVibration([60, 40, 90]);
+
+                setTimeout(() => {
+                    unlockWebsite();
+                }, 420);
+            } else {
+                // ভুল পিন
+                state.fails += 1;
+                pinInputField.value = '';
+                pinInputWrap.classList.remove('pin-error', 'pin-error-hard', 'pin-success');
+                pinSubmitBtn.classList.remove('pin-btn-error', 'pin-btn-success');
+                void pinInputWrap.offsetWidth;
+
+                if (state.fails >= 5) {
+                    // ৫ম বার ভুল হলে জোরে কাঁপুনি + জোরে ভাইব্রেশন + টাইম-লকআউট
+                    state.lockCount += 1;
+                    state.fails = 0;
+                    const lockSec = getLockDurationSeconds(state.lockCount);
+                    state.lockUntil = Date.now() + lockSec * 1000;
+                    saveGuardState(state);
+
+                    pinInputWrap.classList.add('pin-error-hard');
+                    pinSubmitBtn.classList.add('pin-btn-error');
+                    triggerVibration([240, 80, 240, 80, 350]);
+                    updateLockoutUI();
+
+                    setTimeout(() => {
+                        pinInputWrap.classList.remove('pin-error-hard');
+                        pinSubmitBtn.classList.remove('pin-btn-error');
+                    }, 700);
+                } else {
+                    saveGuardState(state);
+                    pinInputWrap.classList.add('pin-error');
+                    pinSubmitBtn.classList.add('pin-btn-error');
+                    triggerVibration([120, 50, 120]);
+                    pinLockoutMsg.textContent = `ভুল পিন! (${state.fails}/5)`;
+
+                    setTimeout(() => {
+                        pinInputWrap.classList.remove('pin-error');
+                        pinSubmitBtn.classList.remove('pin-btn-error');
+                    }, 520);
+                }
+            }
+        }
+
+        pinSubmitBtn.addEventListener('click', verifyPinEntry);
+
+        function unlockWebsite() {
+            isAppUnlocked = true;
+            appProtectedContent.style.display = 'block';
+            quickLockBtn.style.display = 'flex';
+            pinLockScreen.classList.add('unlocked-hide');
+            document.body.style.overflow = 'auto';
+
+            if (!hasGalleryInitialized) {
+                hasGalleryInitialized = true;
+                initGallery();
+            }
+
+            setTimeout(() => {
+                pinInputWrap.classList.remove('pin-success');
+                pinSubmitBtn.classList.remove('pin-btn-success');
+                pinInputField.value = '';
+            }, 450);
+        }
+
+        function lockWebsiteNow() {
+            if (!isAppUnlocked) return;
+            isAppUnlocked = false;
+            if (overlay.style.display === 'block') {
+                closeFullscreen();
+            }
+            appProtectedContent.style.display = 'none';
+            quickLockBtn.style.display = 'none';
+            pinInputField.value = '';
+            pinLockoutMsg.textContent = '';
+            pinInputWrap.classList.remove('pin-error', 'pin-error-hard', 'pin-success');
+            pinSubmitBtn.classList.remove('pin-btn-error', 'pin-btn-success');
+            pinLockScreen.classList.remove('unlocked-hide');
+            document.body.style.overflow = 'hidden';
+            updateLockoutUI();
+            setTimeout(() => pinInputField.focus(), 120);
+        }
+
+        quickLockBtn.addEventListener('click', lockWebsiteNow);
+
+        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 সম্পূর্ণ বন্ধ + Ctrl+8 লক শর্টকাট
         ['contextmenu', 'copy', 'cut', 'selectstart', 'dragstart'].forEach(evt => {
             document.addEventListener(evt, e => e.preventDefault());
         });
+        document.addEventListener('keydown', e => {
+            // ল্যাপটপে Ctrl + 8 চাপলেই ওয়েবসাইট লক হয়ে পিন পেজে চলে যাবে
+            if (e.ctrlKey && (e.key === '8' || e.code === 'Digit8' || e.code === 'Numpad8')) {
+                e.preventDefault();
+                lockWebsiteNow();
+                return;
+            }
+            if ((e.ctrlKey || e.metaKey) && ['c', 'a', 'x', 'u', 's', 'v'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+            }
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase()))) {
+                e.preventDefault();
+            }
+        });
+
+        updateLockoutUI();
         document.addEventListener('keydown', e => {
             if ((e.ctrlKey || e.metaKey) && ['c', 'a', 'x', 'u', 's'].includes(e.key.toLowerCase())) {
                 e.preventDefault();
@@ -1170,8 +1708,8 @@ const gallery = document.getElementById('gallery');
             }
         }, { passive: true });
 
-        // গ্যালারি চালু করা
-        initGallery();
+        // গ্যালারি পিন দেওয়ার পর আনলক হলেই চালু হবে
+        document.body.style.overflow = 'hidden';
     </script>
 </body>
 </html>
