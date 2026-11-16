@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -55,10 +54,80 @@
             pointer-events: auto;
         }
 
-       .main-title {
+/* স্টাইলিশ মেইন টাইটেল ও তার আশেপাশে রাজকীয় গ্লো ডেকোরেশন (ফন্ট ও সাইজ অপরিবর্তিত) */
+        .title-showcase-wrap {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 28px 14px 28px;
+            margin-bottom: 6px;
+        }
+
+        .title-wing-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .title-side-ornament {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-ornament-line {
+            width: 48px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), #f59e0b);
+            border-radius: 999px;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.7);
+        }
+
+        .title-ornament-line.right {
+            background: linear-gradient(90deg, #f59e0b, rgba(255, 255, 255, 0.9), transparent);
+        }
+
+        .title-ornament-diamond {
+            width: 9px;
+            height: 9px;
+            background: #ffffff;
+            transform: rotate(45deg);
+            box-shadow: 0 0 12px #ffffff, 0 0 22px #f59e0b;
+            animation: diamondPulse 2.4s infinite ease-in-out;
+        }
+
+        .main-title {
             font-family: 'Bebas Neue', cursive;
-            letter-spacing: 5px;
-            text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+            letter-spacing: 6px;
+            color: #ffffff;
+            text-shadow: 0 0 18px rgba(255, 255, 255, 0.45),
+                         0 0 38px rgba(245, 158, 11, 0.35),
+                         3px 6px 14px rgba(0, 0, 0, 0.85);
+            position: relative;
+            line-height: 1;
+        }
+
+        .title-bottom-glow {
+            width: 75%;
+            height: 3px;
+            margin-top: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), #f59e0b, rgba(255,255,255,0.95), transparent);
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.75);
+        }
+
+        @keyframes diamondPulse {
+            0%, 100% { transform: rotate(45deg) scale(1); opacity: 0.85; }
+            50% { transform: rotate(45deg) scale(1.35); opacity: 1; }
+        }
+
+        @media (min-width: 768px) {
+            .title-ornament-line {
+                width: 95px;
+            }
         }
 
         /* টাইটেলের নিচে চ্যাপ্টার ফিল্টার বারের ডিজাইন */
@@ -111,8 +180,6 @@
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            content-visibility: auto;
-            contain-intrinsic-size: 400px;
         }
 
         /* স্মুথ এন্ট্রান্স অ্যানিমেশন ও হাই-পারফরম্যান্স গ্লাস কার্ড */
@@ -124,11 +191,10 @@
             border: 1px solid rgba(255, 255, 255, 0.22);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
             opacity: 0;
-            transform: translateY(28px) scale(0.92);
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                        box-shadow 0.35s ease,
-                        opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: transform, opacity;
+            transform: translateY(24px) scale(0.94);
+            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.32s ease,
+                        opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .photo-card.card-visible {
@@ -162,14 +228,15 @@
             backdrop-filter: blur(18px) saturate(135%);
             -webkit-backdrop-filter: blur(18px) saturate(135%);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
             overflow: hidden;
             touch-action: none;
         }
 
-        /* গ্যালারি সোয়াইপ ট্র্যাক — ফোনে আঙুল দিয়ে টানলে স্লাইড হতে দেখা যাবে */
+        /* গ্যালারি সোয়াইপ ট্র্যাক — position: absolute; left: 0 দেওয়ায় যে ছবিতে ক্লিক করবেন ১০০% সেই ছবিটাই ওপেন হবে */
         #fs-slider-track {
+            position: absolute;
+            top: 0;
+            left: 0;
             display: flex;
             align-items: center;
             width: 300vw;
@@ -200,8 +267,7 @@
             image-rendering: -webkit-optimize-contrast;
             filter: contrast(1.03) saturate(1.04);
             transform-origin: center center;
-            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: transform;
+            transition: transform 0.2s ease-out;
         }
 
         .controls {
@@ -231,6 +297,63 @@
             color: black;
         }
 
+/* শুধুমাত্র ল্যাপটপ ও ডেস্কটপের জন্য দুই পাশে মোটা অ্যারো বাটন (ভেতরে কালো, বর্ডার সাদা — ফোনে কখনোই দেখা যাবে না) */
+        .desktop-nav-arrow {
+            display: none;
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #000000;
+            border: 3.5px solid #ffffff;
+            color: #ffffff;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1200;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85), 0 0 12px rgba(255, 255, 255, 0.25);
+            transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+                        background-color 0.22s ease,
+                        box-shadow 0.22s ease;
+            outline: none;
+        }
+
+        .desktop-nav-arrow svg {
+            width: 34px;
+            height: 34px;
+            stroke: #ffffff;
+            stroke-width: 4;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+        }
+
+        .desktop-nav-arrow:hover {
+            background: #141414;
+            border-color: #ffffff;
+            transform: translateY(-50%) scale(1.12);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 255, 255, 0.7);
+        }
+
+        .desktop-nav-arrow:active {
+            transform: translateY(-50%) scale(0.94);
+        }
+
+        .desktop-nav-arrow.left {
+            left: 26px;
+        }
+
+        .desktop-nav-arrow.right {
+            right: 26px;
+        }
+
+        /* শুধুমাত্র মাউস/ল্যাপটপ/ডেস্কটপ স্ক্রিনে এই বাটন দুটি দেখাবে, ফোনে একদম বন্ধ থাকবে */
+        @media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+            .desktop-nav-arrow {
+                display: flex;
+            }
+        }
+
         #scroll-top {
             position: fixed;
             bottom: 30px;
@@ -251,7 +374,22 @@
 <body>
 
 <header class="text-center pt-10 pb-4">
-        <h1 class="main-title text-white text-7xl md:text-9xl mb-2">XsXX</h1>
+        <!-- ফন্ট ও সাইজ ঠিক রেখে আশেপাশে স্টাইলিশ ডেকোরেশন -->
+        <div class="title-showcase-wrap">
+            <div class="title-wing-row">
+                <div class="title-side-ornament">
+                    <span class="title-ornament-line"></span>
+                    <span class="title-ornament-diamond"></span>
+                </div>
+                <h1 class="main-title text-white text-7xl md:text-9xl">XsXX</h1>
+                <div class="title-side-ornament">
+                    <span class="title-ornament-diamond"></span>
+                    <span class="title-ornament-line right"></span>
+                </div>
+            </div>
+            <div class="title-bottom-glow"></div>
+        </div>
+
         <!-- অটোমেটিক চ্যাপ্টার ফিল্টার বাটন বার (CH 1, CH 2, CH 3...) -->
         <div id="chapter-filter-bar" class="chapter-filter-bar"></div>
         <div id="first-chapter-title-wrap" class="w-full max-w-6xl mx-auto px-6 text-left">
@@ -270,6 +408,15 @@
             <div id="autoplay-btn" class="btn">Auto Play: OFF</div>
             <div onclick="closeFullscreen()" class="btn">Close</div>
         </div>
+
+<!-- শুধুমাত্র ল্যাপটপ ও ডেস্কটপের জন্য বাম ও ডান পাশে সাদা বর্ডার ও কালো ভেতরের মোটা অ্যারো বাটন -->
+        <button id="fs-desktop-prev" type="button" class="desktop-nav-arrow left" aria-label="Previous Photo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button id="fs-desktop-next" type="button" class="desktop-nav-arrow right" aria-label="Next Photo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
         <div id="fs-slider-track">
             <div class="fs-slide"><img id="fs-prev-img" class="fs-slide-img" src="" alt="Previous View"></div>
             <div class="fs-slide"><img id="fullscreen-img" class="fs-slide-img" src="" alt="Fullscreen View"></div>
@@ -432,18 +579,24 @@ const gallery = document.getElementById('gallery');
         const fsPrevImg = document.getElementById('fs-prev-img');
         const fsImg = document.getElementById('fullscreen-img');
         const fsNextImg = document.getElementById('fs-next-img');
+        const fsDesktopPrev = document.getElementById('fs-desktop-prev');
+        const fsDesktopNext = document.getElementById('fs-desktop-next');
         const scrollTop = document.getElementById('scroll-top');
         const autoPlayBtn = document.getElementById('autoplay-btn');
 
         let currentIdx = 0;
         let images = [];
+        let allChaptersList = [];
+        let activeFilterChapterIdx = 'all'; // 'all' মানে সব চ্যাপ্টার, আর 0, 1, 2... মানে নির্দিষ্ট চ্যাপ্টার
         let isAutoPlaying = false;
-        let autoPlayInterval;
+        let autoPlayInterval = null;
         let scale = 1;
         let startX = 0;
         let currentDragX = 0;
         let isDragging = false;
         let isAnimatingSlide = false;
+        let slideReleaseTimer = null;
+        const preloadedCache = new Set();
 
         // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট ও ড্র্যাগ সম্পূর্ণ বন্ধ করা
         ['contextmenu', 'copy', 'cut', 'selectstart', 'dragstart'].forEach(evt => {
@@ -455,52 +608,49 @@ const gallery = document.getElementById('gallery');
             }
         });
 
-        // ২. ফুলস্ক্রিনে ছবির রেজোলিউশন যতটা সম্ভব HD করার ফাংশন
-        function getHdImageUrl(url) {
-            if (!url) return '';
-            return url
-                .replace(/_320x_\.jpg$/i, '_1280x_.jpg')
-                .replace(/\/460\//g, '/1280/');
+        // ২. পাশের ছবিগুলো যেন ০ সেকেন্ডে সাথে সাথে চলে আসে তার জন্য মেমোরি প্রিলোডার
+        function preloadSingleImage(url) {
+            if (!url || preloadedCache.has(url)) return;
+            preloadedCache.add(url);
+            const img = new Image();
+            img.decoding = 'async';
+            img.src = url;
         }
 
-        // ৩. স্ক্রল ও লোডিংয়ের সময় ছবিগুলো সুন্দর অ্যানিমেশনের সাথে ভেসে ওঠার সিস্টেম
+        function preloadNeighborImages() {
+            if (!images.length) return;
+            const total = images.length;
+            // সামনের ও পেছনের ৩টি করে ছবি আগে থেকেই রেডি করে রাখা
+            for (let offset = -3; offset <= 3; offset++) {
+                const idx = (currentIdx + offset + total) % total;
+                preloadSingleImage(images[idx]);
+            }
+        }
+
+        // ৩. স্ক্রল ও লোডিংয়ের সময় ছবিগুলো ল্যাগ ছাড়াই সুন্দর অ্যানিমেশনের সাথে ভেসে ওঠা
         const cardObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     const card = entry.target;
-                    const delay = (Number(card.dataset.animIndex || 0) % 10) * 55;
-                    setTimeout(() => {
+                    requestAnimationFrame(() => {
                         card.classList.add('card-visible');
-                    }, delay);
+                    });
                     cardObserver.unobserve(card);
                 }
             });
-        }, { threshold: 0.08, rootMargin: '0px 0px 60px 0px' });
-
-        function createPhotoCard(imgUrl, globalIndex, localIndex, labelPrefix) {
-            const card = document.createElement('div');
-            card.className = 'photo-card';
-            card.dataset.animIndex = localIndex;
-            card.innerHTML = `<img src="${imgUrl}" alt="${labelPrefix} ${localIndex + 1}" loading="lazy" decoding="async">`;
-            card.onclick = () => openFullscreen(globalIndex);
-            cardObserver.observe(card);
-            return card;
-        }
-
-let allChaptersList = [];
-        let activeFilterChapterIdx = 'all'; // 'all' মানে সব চ্যাপ্টার দেখাচ্ছে, আর 0, 1, 2... মানে নির্দিষ্ট চ্যাপ্টার
+        }, { threshold: 0.05, rootMargin: '0px 0px 80px 0px' });
 
         function createChapterCard(imgUrl, chapterIdx, photoIdxInChapter, labelPrefix) {
             const card = document.createElement('div');
             card.className = 'photo-card';
-            card.dataset.animIndex = photoIdxInChapter;
+            card.style.transitionDelay = `${(photoIdxInChapter % 6) * 40}ms`;
             card.innerHTML = `<img src="${imgUrl}" alt="${labelPrefix} ${photoIdxInChapter + 1}" loading="lazy" decoding="async">`;
             card.onclick = () => openFullscreen(chapterIdx, photoIdxInChapter);
             cardObserver.observe(card);
             return card;
         }
 
-        // ৪. সব চ্যাপ্টার একত্রিত করা (ভবিষ্যতে moreChapters-এ যত চ্যাপ্টারই যোগ করুন, অটোমেটিক চলে আসবে)
+        // ৪. সব চ্যাপ্টার একত্রিত করা (১ম: সানি লিওন | ২য়: alyx star | ৩য়: মিয়াঁ খলিফা | ৪র্থ/শেষ: সেরা কিছু)
         function buildAllChaptersList() {
             const alyxChapter = moreChapters.find(ch => ch.name.trim().toLowerCase() === 'alyx star');
             const seraKichuChapter = moreChapters.find(ch => ch.name.trim() === 'সেরা কিছু');
@@ -521,20 +671,18 @@ let allChaptersList = [];
             return list;
         }
 
-        // টাইটেলের নিচে অটোমেটিক CH 1, CH 2, CH 3... বাটন তৈরি করা
+        // টাইটেলের নিচে অটোমেটিক ALL এবং CH 1, CH 2, CH 3... বাটন তৈরি করা
         function renderFilterButtons() {
             const filterBar = document.getElementById('chapter-filter-bar');
             if (!filterBar) return;
             filterBar.innerHTML = '';
 
-            // সব চ্যাপ্টার একসাথে দেখার জন্য ALL বাটন
             const allBtn = document.createElement('button');
             allBtn.className = `ch-filter-btn ${activeFilterChapterIdx === 'all' ? 'active' : ''}`;
             allBtn.textContent = 'ALL';
             allBtn.onclick = () => selectChapterFilter('all');
             filterBar.appendChild(allBtn);
 
-            // যতগুলো চ্যাপ্টার থাকবে ততগুলো CH 1, CH 2, CH 3... বাটন
             allChaptersList.forEach((ch, idx) => {
                 const btn = document.createElement('button');
                 btn.className = `ch-filter-btn ${activeFilterChapterIdx === idx ? 'active' : ''}`;
@@ -545,7 +693,6 @@ let allChaptersList = [];
             });
         }
 
-        // বাটনে চাপ দিলে নির্দিষ্ট চ্যাপ্টার ফিল্টার হওয়া (আবার একই বাটনে চাপ দিলে সব চ্যাপ্টার ফিরে আসা)
         function selectChapterFilter(targetIdx) {
             if (activeFilterChapterIdx === targetIdx && targetIdx !== 'all') {
                 activeFilterChapterIdx = 'all';
@@ -573,7 +720,6 @@ let allChaptersList = [];
             extraContainer.innerHTML = '';
 
             if (activeFilterChapterIdx === 'all') {
-                // সবগুলো চ্যাপ্টার দেখানো হবে
                 if (firstTitleWrap) firstTitleWrap.style.display = 'block';
                 if (firstTitleEl && allChaptersList[0]) {
                     firstTitleEl.textContent = allChaptersList[0].name;
@@ -596,7 +742,6 @@ let allChaptersList = [];
                     gallerySksk.style.display = 'none';
                 }
 
-                // ৩য় চ্যাপ্টার থেকে বাকি সব চ্যাপ্টার
                 allChaptersList.slice(2).forEach((chapter, sliceIdx) => {
                     const realChapterIdx = sliceIdx + 2;
                     const titleDiv = document.createElement('div');
@@ -614,7 +759,6 @@ let allChaptersList = [];
                     extraContainer.appendChild(sec);
                 });
             } else {
-                // শুধুমাত্র সিলেক্ট করা চ্যাপ্টারের (যেমন CH 1 বা CH 2) ছবিগুলো দেখানো হবে
                 const selectedChapter = allChaptersList[activeFilterChapterIdx];
                 if (!selectedChapter) return;
 
@@ -634,41 +778,90 @@ let allChaptersList = [];
             renderFilterButtons();
             renderGalleryView();
         }
+// জুম ও প্যান ভেরিয়েবল (ফোনের পিঞ্চ-জুম এবং ল্যাপটপের মাউস হুইল জুমের জন্য)
+        let panX = 0;
+        let panY = 0;
+        let isPinching = false;
+        let isPanningZoomed = false;
+        let pinchStartDist = 0;
+        let pinchStartScale = 1;
+        let panStartClientX = 0;
+        let panStartClientY = 0;
+        let panOriginX = 0;
+        let panOriginY = 0;
+        let pinchCooldownUntil = 0;
 
-        // ৫. ফুলস্ক্রিন স্লাইডার এবং HD ইমেজ লোডার
-        function setImgWithFallback(imgEl, rawUrl) {
-            const hdUrl = getHdImageUrl(rawUrl);
-            imgEl.onerror = () => {
-                imgEl.onerror = null;
-                imgEl.src = rawUrl;
-            };
-            imgEl.src = hdUrl;
+        function applyZoomTransform(withTransition = false) {
+            fsImg.style.transition = withTransition ? 'transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)' : 'none';
+            fsImg.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
         }
 
+        function resetZoomState(withTransition = false) {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+            isPinching = false;
+            isPanningZoomed = false;
+            applyZoomTransform(withTransition);
+        }
+
+        function getTouchDistance(t1, t2) {
+            const dx = t1.clientX - t2.clientX;
+            const dy = t1.clientY - t2.clientY;
+            return Math.hypot(dx, dy);
+        }
+
+        // ৫. ফুলস্ক্রিন স্লাইডার সিঙ্ক ও ০-সেকেন্ড ইনস্ট্যান্ট লোডিং
         function syncSliderImages() {
             if (!images.length) return;
-            const prevIndex = (currentIdx - 1 + images.length) % images.length;
-            const nextIndex = (currentIdx + 1) % images.length;
+            const total = images.length;
+            const prevIndex = (currentIdx - 1 + total) % total;
+            const nextIndex = (currentIdx + 1 + total) % total;
 
             sliderTrack.style.transition = 'none';
-            sliderTrack.style.transform = 'translate3d(-100vw, 0, 0)';
+            const vw = window.innerWidth;
+            sliderTrack.style.transform = `translate3d(${-vw}px, 0, 0)`;
 
-            scale = 1;
-            fsImg.style.transform = 'scale(1)';
+            resetZoomState(false);
 
-            setImgWithFallback(fsPrevImg, images[prevIndex]);
-            setImgWithFallback(fsImg, images[currentIdx]);
-            setImgWithFallback(fsNextImg, images[nextIndex]);
+            fsPrevImg.src = images[prevIndex];
+            fsImg.src = images[currentIdx];
+            fsNextImg.src = images[nextIndex];
+
+            preloadNeighborImages();
         }
 
-        // যে চ্যাপ্টারের ছবিতে ক্লিক করা হবে, ফুলস্ক্রিন ও Auto Play শুধুমাত্র ওই চ্যাপ্টারের ছবিগুলোর মধ্যেই ঘুরবে
+        // ৬. যে ছবিতে ক্লিক করবেন ঠিক সেই ছবিটাই ওপেন হবে:
+        // - ALL সিলেক্ট থাকলে সব চ্যাপ্টারের সব ছবি ফুলস্ক্রিন ও Auto Play-তে ঘুরবে
+        // - নির্দিষ্ট CH সিলেক্ট থাকলে শুধু ওই চ্যাপ্টারের ছবিগুলোই ঘুরবে
         function openFullscreen(chapterIdx, photoIdxInChapter) {
-            const targetChapter = allChaptersList[chapterIdx];
-            if (!targetChapter || !targetChapter.links.length) return;
+            if (activeFilterChapterIdx === 'all') {
+                images = [];
+                let targetGlobalIdx = 0;
+                let count = 0;
 
-            images = [...targetChapter.links];
-            currentIdx = photoIdxInChapter;
-            overlay.style.display = 'flex';
+                allChaptersList.forEach((ch, cIdx) => {
+                    ch.links.forEach((link, pIdx) => {
+                        if (cIdx === chapterIdx && pIdx === photoIdxInChapter) {
+                            targetGlobalIdx = count;
+                        }
+                        images.push(link);
+                        count++;
+                    });
+                });
+                currentIdx = targetGlobalIdx;
+            } else {
+                const targetChapter = allChaptersList[chapterIdx];
+                if (!targetChapter || !targetChapter.links.length) return;
+                images = [...targetChapter.links];
+                currentIdx = photoIdxInChapter;
+            }
+
+            isAnimatingSlide = false;
+            isDragging = false;
+            clearTimeout(slideReleaseTimer);
+
+            overlay.style.display = 'block';
             document.body.style.overflow = 'hidden';
             syncSliderImages();
         }
@@ -676,32 +869,49 @@ let allChaptersList = [];
         function closeFullscreen() {
             overlay.style.display = 'none';
             stopAutoPlay();
+            isAnimatingSlide = false;
+            isDragging = false;
+            resetZoomState(false);
+            clearTimeout(slideReleaseTimer);
             document.body.style.overflow = 'auto';
         }
 
-        fsImg.addEventListener('dblclick', closeFullscreen);
+        fsImg.addEventListener('dblclick', () => {
+            if (scale > 1.05) {
+                resetZoomState(true);
+            } else {
+                closeFullscreen();
+            }
+        });
 
-        // পাশের ছবিতে স্লাইড করে যাওয়ার ফাংশন (মোবাইল সোয়াইপ, অটো প্লে ও ল্যাপটপের অ্যারো বাটনের জন্য)
+        // ৭. ল্যাগ-মুক্ত ১টি করে ছবি স্লাইড হওয়ার ফাংশন (একবারে কখনোই ২-৩টা লাফাবে না)
         function slideToDirection(direction) {
             if (isAnimatingSlide || !images.length) return;
             isAnimatingSlide = true;
+            clearTimeout(slideReleaseTimer);
 
-            sliderTrack.style.transition = 'transform 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
-            if (direction === 'next') {
-                sliderTrack.style.transform = 'translate3d(-200vw, 0, 0)';
-            } else {
-                sliderTrack.style.transform = 'translate3d(0vw, 0, 0)';
+            if (scale !== 1 || panX !== 0 || panY !== 0) {
+                resetZoomState(true);
             }
 
-            setTimeout(() => {
+            const vw = window.innerWidth;
+            sliderTrack.style.transition = 'transform 0.26s cubic-bezier(0.22, 1, 0.36, 1)';
+            if (direction === 'next') {
+                sliderTrack.style.transform = `translate3d(${-2 * vw}px, 0, 0)`;
+            } else {
+                sliderTrack.style.transform = `translate3d(0px, 0, 0)`;
+            }
+
+            slideReleaseTimer = setTimeout(() => {
+                const total = images.length;
                 if (direction === 'next') {
-                    currentIdx = (currentIdx + 1) % images.length;
+                    currentIdx = (currentIdx + 1) % total;
                 } else {
-                    currentIdx = (currentIdx - 1 + images.length) % images.length;
+                    currentIdx = (currentIdx - 1 + total) % total;
                 }
                 syncSliderImages();
                 isAnimatingSlide = false;
-            }, 320);
+            }, 265);
         }
 
         function nextImg() {
@@ -712,42 +922,149 @@ let allChaptersList = [];
             slideToDirection('prev');
         }
 
-        // ৬. ফোনে আঙুল দিয়ে টানলে গ্যালারির মতো ছবিটি সরে যাওয়া ও পরের ছবিটি আসা
+        // ল্যাপটপ/ডেস্কটপের দুই পাশের মোটা অ্যারো বাটনে মাউস দিয়ে ক্লিক করলে কাজ করা
+        if (fsDesktopPrev) {
+            fsDesktopPrev.onclick = (e) => {
+                e.stopPropagation();
+                prevImg();
+            };
+        }
+        if (fsDesktopNext) {
+            fsDesktopNext.onclick = (e) => {
+                e.stopPropagation();
+                nextImg();
+            };
+        }
+
+        // ৮. ফোনে ২ আঙুল দিয়ে জুম-ইন/জুম-আউট (Pinch Zoom) এবং ১ আঙুল দিয়ে মাখনের মতো স্মুথ সোয়াইপ
         overlay.addEventListener('touchstart', e => {
-            if (isAnimatingSlide || e.touches.length > 1) return;
-            startX = e.touches[0].clientX;
-            currentDragX = 0;
-            isDragging = true;
-            sliderTrack.style.transition = 'none';
+            if (e.target.closest('.controls') || e.target.closest('.desktop-nav-arrow')) return;
+            if (isAnimatingSlide) return;
+
+            // ২ আঙুল দিলে সাথে সাথে সোয়াইপ বন্ধ হয়ে পিঞ্চ-জুম চালু হবে
+            if (e.touches.length === 2) {
+                isDragging = false;
+                isPanningZoomed = false;
+                isPinching = true;
+                const vw = window.innerWidth;
+                sliderTrack.style.transition = 'none';
+                sliderTrack.style.transform = `translate3d(${-vw}px, 0, 0)`;
+                pinchStartDist = getTouchDistance(e.touches[0], e.touches[1]);
+                pinchStartScale = scale;
+                return;
+            }
+
+            // ১ আঙুল দিলে: যদি জুম করা থাকে তবে ছবি চারপাশে সরানো (Pan) যাবে, আর জুম না থাকলে পাশের ছবিতে সোয়াইপ হবে
+            if (e.touches.length === 1) {
+                if (Date.now() < pinchCooldownUntil) return;
+
+                if (scale > 1.02) {
+                    isDragging = false;
+                    isPanningZoomed = true;
+                    panStartClientX = e.touches[0].clientX;
+                    panStartClientY = e.touches[0].clientY;
+                    panOriginX = panX;
+                    panOriginY = panY;
+                } else {
+                    startX = e.touches[0].clientX;
+                    currentDragX = 0;
+                    isDragging = true;
+                    sliderTrack.style.transition = 'none';
+                }
+            }
         }, { passive: true });
 
         overlay.addEventListener('touchmove', e => {
-            if (!isDragging || scale > 1) return;
-            currentDragX = e.touches[0].clientX - startX;
-            sliderTrack.style.transform = `translate3d(calc(-100vw + ${currentDragX}px), 0, 0)`;
+            if (isAnimatingSlide) return;
+
+            // ২ আঙুলে টেনে জুম-ইন এবং জুম-আউট করা
+            if (isPinching && e.touches.length === 2) {
+                const dist = getTouchDistance(e.touches[0], e.touches[1]);
+                if (pinchStartDist > 0) {
+                    const newScale = pinchStartScale * (dist / pinchStartDist);
+                    scale = Math.min(Math.max(1, newScale), 4);
+                    if (scale <= 1.02) {
+                        panX = 0;
+                        panY = 0;
+                    }
+                    applyZoomTransform(false);
+                }
+                return;
+            }
+
+            // জুম করা অবস্থায় ১ আঙুল দিয়ে ছবি সরিয়ে দেখা
+            if (isPanningZoomed && e.touches.length === 1 && scale > 1.02) {
+                const dx = e.touches[0].clientX - panStartClientX;
+                const dy = e.touches[0].clientY - panStartClientY;
+                const maxPanX = (window.innerWidth * (scale - 1)) * 0.5;
+                const maxPanY = (window.innerHeight * (scale - 1)) * 0.5;
+                panX = Math.max(-maxPanX, Math.min(maxPanX, panOriginX + dx));
+                panY = Math.max(-maxPanY, Math.min(maxPanY, panOriginY + dy));
+                applyZoomTransform(false);
+                return;
+            }
+
+            // স্বাভাবিক অবস্থায় (`scale === 1`) ১ আঙুল দিয়ে টেনে পাশের ছবিতে সোয়াইপ করা
+            if (isDragging && e.touches.length === 1 && scale <= 1.02) {
+                const vw = window.innerWidth;
+                const rawDelta = e.touches[0].clientX - startX;
+                currentDragX = Math.max(-vw * 0.95, Math.min(vw * 0.95, rawDelta));
+                sliderTrack.style.transform = `translate3d(${-vw + currentDragX}px, 0, 0)`;
+            }
         }, { passive: true });
 
-        overlay.addEventListener('touchend', () => {
+        overlay.addEventListener('touchend', e => {
+            // পিঞ্চ-জুম শেষ হলে
+            if (isPinching) {
+                if (e.touches.length < 2) {
+                    isPinching = false;
+                    pinchCooldownUntil = Date.now() + 180; // জুম ছাড়ার সাথে সাথে যেন ভুল করে স্লাইড না হয়ে যায়
+                    if (scale < 1.06) {
+                        resetZoomState(true);
+                    }
+                }
+                return;
+            }
+
+            // জুম প্যান শেষ হলে
+            if (isPanningZoomed) {
+                if (e.touches.length === 0) {
+                    isPanningZoomed = false;
+                }
+                return;
+            }
+
+            // ১ আঙুলের সোয়াইপ শেষ হলে পরের বা আগের ছবিতে যাওয়া
             if (!isDragging) return;
             isDragging = false;
 
-            if (scale > 1) return;
+            if (scale > 1.02 || isAnimatingSlide) return;
 
-            const swipeThreshold = window.innerWidth * 0.16;
+            const vw = window.innerWidth;
+            const swipeThreshold = vw * 0.14;
             if (currentDragX < -swipeThreshold) {
                 slideToDirection('next');
             } else if (currentDragX > swipeThreshold) {
                 slideToDirection('prev');
             } else {
-                sliderTrack.style.transition = 'transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)';
-                sliderTrack.style.transform = 'translate3d(-100vw, 0, 0)';
+                sliderTrack.style.transition = 'transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)';
+                sliderTrack.style.transform = `translate3d(${-vw}px, 0, 0)`;
             }
             currentDragX = 0;
         });
 
-        // ৭. ল্যাপটপের কিবোর্ডের ডান (ArrowRight) ও বাম (ArrowLeft) বাটনে চাপ দিয়ে ছবি পরিবর্তন
+        // স্ক্রিন রিসাইজ হলে স্লাইডার ঠিক রাখা
+        window.addEventListener('resize', () => {
+            if (overlay.style.display === 'block' && !isAnimatingSlide) {
+                const vw = window.innerWidth;
+                sliderTrack.style.transition = 'none';
+                sliderTrack.style.transform = `translate3d(${-vw}px, 0, 0)`;
+            }
+        });
+
+        // ৯. ল্যাপটপের কিবোর্ডের ডান (ArrowRight) ও বাম (ArrowLeft) বাটনে চাপ দিয়ে ১টি করে ছবি পরিবর্তন
         window.addEventListener('keydown', e => {
-            if (overlay.style.display === 'flex') {
+            if (overlay.style.display === 'block') {
                 if (e.key === 'ArrowRight') {
                     e.preventDefault();
                     nextImg();
@@ -761,12 +1078,16 @@ let allChaptersList = [];
             }
         });
 
-        // মাউস হুইল জুম
+        // ১০. ল্যাপটপ/ডেস্কটপে মাউসের চাকা (Wheel) ঘুরিয়ে জুম-ইন ও জুম-আউট
         overlay.addEventListener('wheel', e => {
             e.preventDefault();
-            scale += e.deltaY * -0.001;
-            scale = Math.min(Math.max(0.5, scale), 4);
-            fsImg.style.transform = `scale(${scale})`;
+            scale += e.deltaY * -0.0012;
+            scale = Math.min(Math.max(1, scale), 4);
+            if (scale <= 1.02) {
+                panX = 0;
+                panY = 0;
+            }
+            applyZoomTransform(true);
         }, { passive: false });
 
         function toggleAutoPlay() {
@@ -775,15 +1096,23 @@ let allChaptersList = [];
         }
 
         function startAutoPlay() {
+            stopAutoPlay();
             isAutoPlaying = true;
             autoPlayBtn.innerText = "Auto Play: ON";
-            autoPlayInterval = setInterval(nextImg, 3000);
+            autoPlayInterval = setInterval(() => {
+                if (!isDragging && !isAnimatingSlide) {
+                    nextImg();
+                }
+            }, 3000);
         }
 
         function stopAutoPlay() {
             isAutoPlaying = false;
             autoPlayBtn.innerText = "Auto Play: OFF";
-            clearInterval(autoPlayInterval);
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
         }
 
         autoPlayBtn.onclick = (e) => {
