@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top - Photo Gallery</title>
+  <title>XsXX - Photo Gallery</title>
     <!-- ট্যাবের উপরে ওয়ালপেপারের মুখের জুমিং পয়েন্ট আইকন (Favicon) -->
     <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Ccircle cx='32' cy='32' r='30'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Cimage href='https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg' width='150' height='150' x='-43' y='-10' preserveAspectRatio='xMidYMid slice'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='30' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg">
@@ -33,15 +33,22 @@
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
         }
+:root {
+            --bg-wallpaper: url('https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg');
+            --bg-brightness: 0.68;
+            --bg-blur: 0px;
+        }
 
-        /* মোবাইল ও ডেস্কটপে ল্যাগ ছাড়া মাখনের মতো স্মুথ স্ক্রলিংয়ের জন্য ফিক্সড GPU ব্যাকগ্রাউন্ড লেয়ার */
+        /* মোবাইল ও ডেস্কটপে ল্যাগ ছাড়া মাখনের মতো স্মুথ স্ক্রলিংয়ের জন্য ফিক্সড GPU ব্যাকগ্রাউন্ড লেয়ার */
         body::before {
             content: "";
             position: fixed;
-            inset: 0;
-            background: linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)),
-                        url('https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg') no-repeat center center;
+            inset: -24px;
+            background-image: var(--bg-wallpaper);
+            background-position: center center;
+            background-repeat: no-repeat;
             background-size: cover;
+            filter: brightness(var(--bg-brightness)) blur(var(--bg-blur));
             z-index: -1;
             transform: translateZ(0);
             will-change: transform;
@@ -628,8 +635,195 @@
             box-shadow: 0 8px 26px rgba(220, 38, 38, 0.9), 0 0 22px rgba(255, 255, 255, 0.5);
         }
 
-        #quick-lock-btn:active {
+       #quick-lock-btn:active {
             transform: scale(0.92);
+        }
+
+        /* ===== উপরে ডান পাশে সেটিংস বাটন ও ডান পাশের স্লাইড মেনু ===== */
+        #settings-menu-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(15, 15, 24, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 950;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease;
+        }
+
+        #settings-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(45deg) scale(1.08);
+        }
+
+        #settings-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 970;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.32s ease, visibility 0.32s ease;
+        }
+
+        #settings-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ডান পাশ থেকে পুরো পাশ জুড়ে আসা বড় সেটিংস মেনু */
+        #settings-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(410px, 92vw);
+            height: 100dvh;
+            background: rgba(10, 11, 18, 0.94);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-left: 1px solid rgba(255, 255, 255, 0.16);
+            z-index: 980;
+            transform: translateX(100%);
+            transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 22px 20px 30px 20px;
+            overflow-y: auto;
+            box-shadow: -12px 0 40px rgba(0, 0, 0, 0.8);
+        }
+
+        #settings-drawer.open {
+            transform: translateX(0);
+        }
+
+        .settings-section-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .settings-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 6px;
+        }
+
+        .settings-input {
+            width: 100%;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            color: #ffffff;
+            padding: 0 14px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 10px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
+        .settings-input:focus {
+            border-color: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+        }
+
+        .settings-tick-btn {
+            width: 100%;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .settings-tick-btn:hover {
+            filter: brightness(1.12);
+            transform: translateY(-1px);
+        }
+
+        .settings-status-msg {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            min-height: 18px;
+            text-align: center;
+        }
+
+        .settings-status-msg.success {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.14);
+            border: 1px solid rgba(34, 197, 94, 0.45);
+            padding: 8px 10px;
+            border-radius: 10px;
+        }
+
+        .settings-status-msg.error {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.14);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            padding: 8px 10px;
+            border-radius: 10px;
+        }
+
+        .settings-range {
+            width: 100%;
+            accent-color: #ffffff;
+            cursor: pointer;
+            height: 6px;
+        }
+
+        /* পিন পরিবর্তনের সামনে খুলে আসা পপআপ বক্স */
+        #pin-change-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 995;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #pin-change-modal.open {
+            display: flex;
+        }
+
+        .pin-change-box {
+            width: 100%;
+            max-width: 360px;
+            background: rgba(14, 16, 24, 0.96);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
         }
     </style>
 </head>
@@ -724,14 +918,107 @@
    <div id="scroll-top" onclick="window.scrollTo(0,0)">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </div>
+<!-- উপরে ডান পাশে সেটিংস আইকন বাটন -->
+    <button id="settings-menu-btn" type="button" title="Settings" aria-label="Open Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
 
-    <!-- ওয়েবসাইটের নিচের ডান পাশে লাল লক বাটন -->
+    <!-- সেটিংস ড্রয়ার ব্যাকড্রপ -->
+    <div id="settings-backdrop"></div>
+
+    <!-- ডান পাশ থেকে আসা বড় সেটিংস মেনু -->
+    <aside id="settings-drawer" aria-hidden="true">
+        <div class="flex items-center justify-between mb-5 pb-3 border-b border-white/15">
+            <h3 class="text-white text-xl font-bold tracking-wide">সেটিংস মেনু</h3>
+            <button id="settings-close-btn" type="button" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer transition">
+                ✕
+            </button>
+        </div>
+
+        <!-- ১. ওয়ালপেপার ও লোগো পরিবর্তন -->
+        <div class="settings-section-card">
+            <h4 class="text-white text-base font-bold mb-3">ওয়ালপেপার চেঞ্জ</h4>
+
+            <label class="settings-label">বর্তমান পিন</label>
+            <input id="wp-current-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="বর্তমান পিন লিখুন" />
+
+            <label class="settings-label">মাস্টার কি (বড় হাতের অক্ষর)</label>
+            <input id="wp-master-key" class="settings-input no-paste-master" type="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
+
+            <label class="settings-label">নতুন ওয়ালপেপার / লোগো লিংক</label>
+            <input id="wp-new-url" class="settings-input" type="url" autocomplete="off" placeholder="https://..." />
+
+            <button id="wp-save-btn" type="button" class="settings-tick-btn">
+                <span>✓</span>
+                <span>ওয়ালপেপার পরিবর্তন করুন</span>
+            </button>
+            <div id="wp-status-msg" class="settings-status-msg"></div>
+        </div>
+
+        <!-- ২. পিন পরিবর্তন বাটন (চাপ দিলে সামনে পপআপ বক্স আসবে) -->
+        <div class="settings-section-card">
+            <h4 class="text-white text-base font-bold mb-2">পিন নিরাপত্তা</h4>
+            <p class="text-white/60 text-xs mb-3">আগের পিন এবং মাস্টার কি দিয়ে নতুন পিন সেট করুন।</p>
+            <button id="open-pin-change-btn" type="button" class="settings-tick-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <span>🔐</span>
+                <span>পিন পরিবর্তন</span>
+            </button>
+        </div>
+
+        <!-- ৩. ওয়ালপেপার ব্রাইটনেস ও ঘোলা/পরিষ্কার (শুধুমাত্র এই ডিভাইসের জন্য) -->
+        <div class="settings-section-card">
+            <h4 class="text-white text-base font-bold mb-1">ওয়ালপেপার ব্রাইটনেস ও ঘনত্ব</h4>
+            <p class="text-white/55 text-xs mb-4">এটি শুধুমাত্র আপনার এই ডিভাইসের জন্য সেভ থাকবে।</p>
+
+            <div class="mb-4">
+                <div class="flex justify-between text-xs text-white/85 mb-1">
+                    <span>ব্রাইটনেস (Brightness)</span>
+                    <span id="brightness-val-label">68%</span>
+                </div>
+                <input id="device-brightness-slider" class="settings-range" type="range" min="0.2" max="1.5" step="0.02" value="0.68" />
+            </div>
+
+            <div>
+                <div class="flex justify-between text-xs text-white/85 mb-1">
+                    <span>পরিষ্কার ↔ ঘোলা (Blur)</span>
+                    <span id="blur-val-label">0px</span>
+                </div>
+                <input id="device-blur-slider" class="settings-range" type="range" min="0" max="20" step="1" value="0" />
+            </div>
+        </div>
+    </aside>
+
+    <!-- পিন পরিবর্তন করার জন্য সামনে খুলে আসা বক্স -->
+    <div id="pin-change-modal">
+        <div class="pin-change-box">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-white text-lg font-bold">পিন পরিবর্তন করুন</h4>
+                <button id="pin-change-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer">✕</button>
+            </div>
+
+            <label class="settings-label">আগের পিন</label>
+            <input id="pc-old-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="আগের পিন লিখুন" />
+
+            <label class="settings-label">মাস্টার কি (বড় হাতের অক্ষরে)</label>
+            <input id="pc-master-key" class="settings-input no-paste-master" type="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
+
+            <label class="settings-label">নতুন পিন</label>
+            <input id="pc-new-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="নতুন পিন লিখুন" />
+
+            <button id="pc-save-btn" type="button" class="settings-tick-btn mt-1">
+                <span>✓</span>
+                <span>নতুন পিন সেভ করুন</span>
+            </button>
+            <div id="pc-status-msg" class="settings-status-msg"></div>
+        </div>
+    </div>
+
+    <!-- ওয়েবসাইটের নিচের ডান পাশে লাল লক বাটন -->
     <button id="quick-lock-btn" type="button" title="Lock Website (Ctrl + 8)" aria-label="Lock Website">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
     </button>
 
     </div><!-- #app-protected-content শেষ -->
-
     <script>
         // --- আপনি নিচে এই লিস্টে আপনার ছবির লিঙ্কগুলো বসিয়ে দিন ---
         const imageLinks = [
@@ -937,9 +1224,37 @@ const gallery = document.getElementById('gallery');
         let isAnimatingSlide = false;
         let slideReleaseTimer = null;
         const preloadedCache = new Set();
-// ===== পিন ও লোগো সেটিংস (এখানে আপনার পিন এবং লোগোর লিংক বসান) =====
-        const SECRET_PIN = "633038"; // <-- এখানে আপনার আসল পিনটি বসান
-        const PIN_LOGO_URL = "https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg"; // <-- এখানে আপনার গোল লোগোর ছবির লিংক বসান
+        
+        // ===== পিন, মাস্টার কি ও ওয়ালপেপার সেটিংস =====
+        const DEFAULT_SECRET_PIN = "633038";
+        const MASTER_KEY_SECRET = "SAJEEB"; // শুধুমাত্র বড় হাতের অক্ষরে কাজ করবে
+        const DEFAULT_PIN_LOGO_URL = "https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg";
+
+        const SITE_CONFIG_KEY = 'xsxx_site_config_v1';
+        const DEVICE_PREF_KEY = 'xsxx_device_visual_v1';
+
+        function getActivePin() {
+            try {
+                const cfg = JSON.parse(localStorage.getItem(SITE_CONFIG_KEY) || '{}');
+                if (cfg.pin) return cfg.pin;
+            } catch (e) {}
+            return DEFAULT_SECRET_PIN;
+        }
+
+        function getActiveWallpaperUrl() {
+            try {
+                const cfg = JSON.parse(localStorage.getItem(SITE_CONFIG_KEY) || '{}');
+                if (cfg.wallpaper) return cfg.wallpaper;
+            } catch (e) {}
+            return DEFAULT_PIN_LOGO_URL;
+        }
+
+        function saveSiteConfig(updates) {
+            try {
+                const current = JSON.parse(localStorage.getItem(SITE_CONFIG_KEY) || '{}');
+                localStorage.setItem(SITE_CONFIG_KEY, JSON.stringify({ ...current, ...updates }));
+            } catch (e) {}
+        }
 
         const pinLockScreen = document.getElementById('pin-lock-screen');
         const pinBgBlurLayer = document.getElementById('pin-bg-blur-layer');
@@ -955,9 +1270,203 @@ const gallery = document.getElementById('gallery');
         let hasGalleryInitialized = false;
         let lockoutTicker = null;
 
-        // লোগো ও আবছা ব্যাকগ্রাউন্ড সেট করা
-        if (pinLogoImg) pinLogoImg.src = PIN_LOGO_URL;
-        if (pinBgBlurLayer) pinBgBlurLayer.style.backgroundImage = `url('${PIN_LOGO_URL}')`;
+        // ওয়ালপেপার, পিন লোগো ও ট্যাব আইকন একসাথে আপডেট করার ফাংশন
+        function applyWallpaperAndLogo(url) {
+            if (!url) return;
+            document.documentElement.style.setProperty('--bg-wallpaper', `url('${url}')`);
+            if (pinLogoImg) pinLogoImg.src = url;
+            if (pinBgBlurLayer) pinBgBlurLayer.style.backgroundImage = `url('${url}')`;
+            const fav = document.getElementById('dynamic-favicon');
+            if (fav) {
+                const safeUrl = encodeURIComponent(url);
+                fav.href = `data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Ccircle cx='32' cy='32' r='30'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Cimage href='${safeUrl}' width='150' height='150' x='-43' y='-10' preserveAspectRatio='xMidYMid slice'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='30' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E`;
+            }
+        }
+
+        applyWallpaperAndLogo(getActiveWallpaperUrl());
+
+        // ডিভাইস-ভিত্তিক ব্রাইটনেস ও ব্লার লোড ও সেভ করা
+        const brightnessSlider = document.getElementById('device-brightness-slider');
+        const blurSlider = document.getElementById('device-blur-slider');
+        const brightnessLabel = document.getElementById('brightness-val-label');
+        const blurLabel = document.getElementById('blur-val-label');
+
+        function applyDeviceVisualPrefs(brightness, blurPx) {
+            document.documentElement.style.setProperty('--bg-brightness', brightness);
+            document.documentElement.style.setProperty('--bg-blur', `${blurPx}px`);
+            if (brightnessSlider) brightnessSlider.value = brightness;
+            if (blurSlider) blurSlider.value = blurPx;
+            if (brightnessLabel) brightnessLabel.textContent = `${Math.round(Number(brightness) * 100)}%`;
+            if (blurLabel) blurLabel.textContent = `${blurPx}px`;
+        }
+
+        (function initDeviceVisualPrefs() {
+            try {
+                const prefs = JSON.parse(localStorage.getItem(DEVICE_PREF_KEY) || '{}');
+                const b = prefs.brightness !== undefined ? prefs.brightness : 0.68;
+                const bl = prefs.blur !== undefined ? prefs.blur : 0;
+                applyDeviceVisualPrefs(b, bl);
+            } catch (e) {
+                applyDeviceVisualPrefs(0.68, 0);
+            }
+        })();
+
+        if (brightnessSlider) {
+            brightnessSlider.addEventListener('input', () => {
+                const b = brightnessSlider.value;
+                const bl = blurSlider ? blurSlider.value : 0;
+                applyDeviceVisualPrefs(b, bl);
+                try { localStorage.setItem(DEVICE_PREF_KEY, JSON.stringify({ brightness: b, blur: bl })); } catch (e) {}
+            });
+        }
+
+        if (blurSlider) {
+            blurSlider.addEventListener('input', () => {
+                const b = brightnessSlider ? brightnessSlider.value : 0.68;
+                const bl = blurSlider.value;
+                applyDeviceVisualPrefs(b, bl);
+                try { localStorage.setItem(DEVICE_PREF_KEY, JSON.stringify({ brightness: b, blur: bl })); } catch (e) {}
+            });
+        }
+
+        // সেটিংস মেনু খোলা ও বন্ধ করা
+        const settingsMenuBtn = document.getElementById('settings-menu-btn');
+        const settingsDrawer = document.getElementById('settings-drawer');
+        const settingsBackdrop = document.getElementById('settings-backdrop');
+        const settingsCloseBtn = document.getElementById('settings-close-btn');
+
+        function openSettingsDrawer() {
+            settingsDrawer.classList.add('open');
+            settingsBackdrop.classList.add('open');
+        }
+
+        function closeSettingsDrawer() {
+            settingsDrawer.classList.remove('open');
+            settingsBackdrop.classList.remove('open');
+        }
+
+        if (settingsMenuBtn) settingsMenuBtn.addEventListener('click', openSettingsDrawer);
+        if (settingsCloseBtn) settingsCloseBtn.addEventListener('click', closeSettingsDrawer);
+        if (settingsBackdrop) settingsBackdrop.addEventListener('click', closeSettingsDrawer);
+
+        // সেটিংসের পিন ও মাস্টার কি বক্সে পেস্ট বন্ধ + সর্বোচ্চ ১০ অক্ষর সীমা
+        document.querySelectorAll('.no-paste-pin').forEach(el => {
+            ['paste', 'drop'].forEach(evt => el.addEventListener(evt, e => e.preventDefault()));
+            el.addEventListener('input', () => {
+                el.value = el.value.replace(/\D/g, '').slice(0, 10);
+            });
+        });
+
+        document.querySelectorAll('.no-paste-master').forEach(el => {
+            ['paste', 'drop'].forEach(evt => el.addEventListener(evt, e => e.preventDefault()));
+            el.addEventListener('input', () => {
+                el.value = el.value.replace(/[^a-zA-Z]/g, '').slice(0, 10);
+            });
+        });
+
+        // ওয়ালপেপার পরিবর্তন লজিক (আসল পিন + বড় হাতের মাস্টার কি SAJEEB প্রয়োজন)
+        const wpCurrentPin = document.getElementById('wp-current-pin');
+        const wpMasterKey = document.getElementById('wp-master-key');
+        const wpNewUrl = document.getElementById('wp-new-url');
+        const wpSaveBtn = document.getElementById('wp-save-btn');
+        const wpStatusMsg = document.getElementById('wp-status-msg');
+
+        if (wpSaveBtn) {
+            wpSaveBtn.addEventListener('click', () => {
+                const pinVal = wpCurrentPin.value.trim();
+                const masterVal = wpMasterKey.value.trim();
+                const urlVal = wpNewUrl.value.trim();
+
+                wpStatusMsg.className = 'settings-status-msg';
+                if (pinVal !== getActivePin()) {
+                    wpStatusMsg.textContent = 'বর্তমান পিনটি সঠিক নয়!';
+                    wpStatusMsg.classList.add('error');
+                    triggerVibration([100, 50, 100]);
+                    return;
+                }
+                if (masterVal !== MASTER_KEY_SECRET) {
+                    wpStatusMsg.textContent = 'মাস্টার কি সঠিক নয় (বড় হাতের অক্ষরে লিখুন)!';
+                    wpStatusMsg.classList.add('error');
+                    triggerVibration([100, 50, 100]);
+                    return;
+                }
+                if (!urlVal || !/^https?:\/\/.+/i.test(urlVal)) {
+                    wpStatusMsg.textContent = 'একটি সঠিক ছবির লিংক দিন!';
+                    wpStatusMsg.classList.add('error');
+                    return;
+                }
+
+                applyWallpaperAndLogo(urlVal);
+                saveSiteConfig({ wallpaper: urlVal });
+                wpCurrentPin.value = '';
+                wpMasterKey.value = '';
+                wpNewUrl.value = '';
+                wpStatusMsg.textContent = '✓ সঠিকভাবে ওয়ালপেপার ও লোগো পরিবর্তন হয়েছে!';
+                wpStatusMsg.classList.add('success');
+                triggerVibration(70);
+            });
+        }
+
+        // পিন পরিবর্তন পপআপ বক্স লজিক
+        const openPinChangeBtn = document.getElementById('open-pin-change-btn');
+        const pinChangeModal = document.getElementById('pin-change-modal');
+        const pinChangeCloseBtn = document.getElementById('pin-change-close-btn');
+        const pcOldPin = document.getElementById('pc-old-pin');
+        const pcMasterKey = document.getElementById('pc-master-key');
+        const pcNewPin = document.getElementById('pc-new-pin');
+        const pcSaveBtn = document.getElementById('pc-save-btn');
+        const pcStatusMsg = document.getElementById('pc-status-msg');
+
+        function closePinChangeModal() {
+            if (pinChangeModal) pinChangeModal.classList.remove('open');
+        }
+
+        if (openPinChangeBtn) {
+            openPinChangeBtn.addEventListener('click', () => {
+                pcStatusMsg.textContent = '';
+                pcStatusMsg.className = 'settings-status-msg';
+                pcOldPin.value = '';
+                pcMasterKey.value = '';
+                pcNewPin.value = '';
+                pinChangeModal.classList.add('open');
+            });
+        }
+        if (pinChangeCloseBtn) pinChangeCloseBtn.addEventListener('click', closePinChangeModal);
+
+        if (pcSaveBtn) {
+            pcSaveBtn.addEventListener('click', () => {
+                const oldVal = pcOldPin.value.trim();
+                const masterVal = pcMasterKey.value.trim();
+                const newVal = pcNewPin.value.trim();
+
+                pcStatusMsg.className = 'settings-status-msg';
+                if (oldVal !== getActivePin()) {
+                    pcStatusMsg.textContent = 'আগের পিনটি সঠিক নয়!';
+                    pcStatusMsg.classList.add('error');
+                    triggerVibration([100, 50, 100]);
+                    return;
+                }
+                if (masterVal !== MASTER_KEY_SECRET) {
+                    pcStatusMsg.textContent = 'মাস্টার কি সঠিক নয় (বড় হাতের অক্ষরে লিখুন)!';
+                    pcStatusMsg.classList.add('error');
+                    triggerVibration([100, 50, 100]);
+                    return;
+                }
+                if (!newVal || newVal.length < 1) {
+                    pcStatusMsg.textContent = 'নতুন পিন লিখুন!';
+                    pcStatusMsg.classList.add('error');
+                    return;
+                }
+
+                saveSiteConfig({ pin: newVal });
+                pcOldPin.value = '';
+                pcMasterKey.value = '';
+                pcNewPin.value = '';
+                pcStatusMsg.textContent = '✓ সঠিকভাবে নতুন পিন পরিবর্তন হয়েছে!';
+                pcStatusMsg.classList.add('success');
+                triggerVibration([60, 40, 80]);
+            });
+        }
 
         // প্লেসহোল্ডার এনিমেশন টেক্সট ঘোরানো (কত সংখ্যার পিন তা না বলে)
         const pinPlaceholders = ["ENTER PIN", "••••••", "UNLOCK"];
@@ -1061,8 +1570,7 @@ const gallery = document.getElementById('gallery');
                 return;
             }
 
-            if (entered === SECRET_PIN) {
-                // সঠিক পিন: বক্স + টিক বাটন সবুজ হয়ে জ্বলে উঠবে ও ভাইব্রেট করে ওয়েবসাইটে ঢোকাবে
+            if (entered === getActivePin()) {
                 saveGuardState({ fails: 0, lockCount: 0, lockUntil: 0 });
                 pinLockoutMsg.textContent = '';
                 pinInputWrap.classList.remove('pin-error', 'pin-error-hard');
@@ -1075,7 +1583,6 @@ const gallery = document.getElementById('gallery');
                     unlockWebsite();
                 }, 420);
             } else {
-                // ভুল পিন
                 state.fails += 1;
                 pinInputField.value = '';
                 pinInputWrap.classList.remove('pin-error', 'pin-error-hard', 'pin-success');
@@ -1083,7 +1590,6 @@ const gallery = document.getElementById('gallery');
                 void pinInputWrap.offsetWidth;
 
                 if (state.fails >= 5) {
-                    // ৫ম বার ভুল হলে জোরে কাঁপুনি + জোরে ভাইব্রেশন + টাইম-লকআউট
                     state.lockCount += 1;
                     state.fails = 0;
                     const lockSec = getLockDurationSeconds(state.lockCount);
@@ -1138,6 +1644,8 @@ const gallery = document.getElementById('gallery');
         function lockWebsiteNow() {
             if (!isAppUnlocked) return;
             isAppUnlocked = false;
+            closeSettingsDrawer();
+            closePinChangeModal();
             if (overlay.style.display === 'block') {
                 closeFullscreen();
             }
@@ -1160,7 +1668,6 @@ const gallery = document.getElementById('gallery');
             document.addEventListener(evt, e => e.preventDefault());
         });
         document.addEventListener('keydown', e => {
-            // ল্যাপটপে Ctrl + 8 চাপলেই ওয়েবসাইট লক হয়ে পিন পেজে চলে যাবে
             if (e.ctrlKey && (e.key === '8' || e.code === 'Digit8' || e.code === 'Numpad8')) {
                 e.preventDefault();
                 lockWebsiteNow();
@@ -1175,12 +1682,6 @@ const gallery = document.getElementById('gallery');
         });
 
         updateLockoutUI();
-        document.addEventListener('keydown', e => {
-            if ((e.ctrlKey || e.metaKey) && ['c', 'a', 'x', 'u', 's'].includes(e.key.toLowerCase())) {
-                e.preventDefault();
-            }
-        });
-
         // ২. পাশের ছবিগুলো যেন ০ সেকেন্ডে সাথে সাথে চলে আসে তার জন্য মেমোরি প্রিলোডার
         function preloadSingleImage(url) {
             if (!url || preloadedCache.has(url)) return;
