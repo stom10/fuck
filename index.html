@@ -798,8 +798,9 @@
             height: 6px;
         }
 
-        /* পিন পরিবর্তনের সামনে খুলে আসা পপআপ বক্স */
-        #pin-change-modal {
+/* ওয়ালপেপার ও পিন পরিবর্তনের সামনে খুলে আসা পপআপ বক্স */
+        #pin-change-modal,
+        #wallpaper-change-modal {
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.78);
@@ -812,8 +813,16 @@
             padding: 20px;
         }
 
-        #pin-change-modal.open {
+        #pin-change-modal.open,
+        #wallpaper-change-modal.open {
             display: flex;
+        }
+
+        /* ওয়ালপেপার লিংক বক্সে ফোনে ও পিসিতে সহজে পেস্ট করার জন্য সিলেকশন চালু */
+        #wp-new-url {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
         }
 
         .pin-change-box {
@@ -935,27 +944,17 @@
             </button>
         </div>
 
-        <!-- ১. ওয়ালপেপার ও লোগো পরিবর্তন -->
+<!-- ১. ওয়ালপেপার চেঞ্জ (ছোট কার্ড — চাপ দিলে সামনে বক্স খুলবে) -->
         <div class="settings-section-card">
-            <h4 class="text-white text-base font-bold mb-3">ওয়ালপেপার চেঞ্জ</h4>
-
-            <label class="settings-label">বর্তমান পিন</label>
-            <input id="wp-current-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="বর্তমান পিন লিখুন" />
-
-            <label class="settings-label">মাস্টার কি (বড় হাতের অক্ষর)</label>
-            <input id="wp-master-key" class="settings-input no-paste-master" type="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
-
-            <label class="settings-label">নতুন ওয়ালপেপার / লোগো লিংক</label>
-            <input id="wp-new-url" class="settings-input" type="url" autocomplete="off" placeholder="https://..." />
-
-            <button id="wp-save-btn" type="button" class="settings-tick-btn">
-                <span>✓</span>
-                <span>ওয়ালপেপার পরিবর্তন করুন</span>
+            <h4 class="text-white text-base font-bold mb-2">ওয়ালপেপার ও লোগো</h4>
+            <p class="text-white/60 text-xs mb-3">আসল পিন এবং মাস্টার কি দিয়ে ওয়ালপেপার ও লোগোর লিংক পরিবর্তন করুন।</p>
+            <button id="open-wp-change-btn" type="button" class="settings-tick-btn">
+                <span>🖼️</span>
+                <span>ওয়ালপেপার চেঞ্জ</span>
             </button>
-            <div id="wp-status-msg" class="settings-status-msg"></div>
         </div>
 
-        <!-- ২. পিন পরিবর্তন বাটন (চাপ দিলে সামনে পপআপ বক্স আসবে) -->
+        <!-- ২. পিন পরিবর্তন (ছোট কার্ড — চাপ দিলে সামনে বক্স খুলবে) -->
         <div class="settings-section-card">
             <h4 class="text-white text-base font-bold mb-2">পিন নিরাপত্তা</h4>
             <p class="text-white/60 text-xs mb-3">আগের পিন এবং মাস্টার কি দিয়ে নতুন পিন সেট করুন।</p>
@@ -988,6 +987,31 @@
         </div>
     </aside>
 
+    <!-- ওয়ালপেপার পরিবর্তনের জন্য সামনে খুলে আসা বক্স -->
+    <div id="wallpaper-change-modal">
+        <div class="pin-change-box">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-white text-lg font-bold">ওয়ালপেপার পরিবর্তন করুন</h4>
+                <button id="wp-change-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer">✕</button>
+            </div>
+
+            <label class="settings-label">বর্তমান পিন</label>
+            <input id="wp-current-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="বর্তমান পিন লিখুন" />
+
+            <label class="settings-label">মাস্টার কি (বড় হাতের অক্ষরে)</label>
+            <input id="wp-master-key" class="settings-input no-paste-master" type="password" inputmode="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
+
+            <label class="settings-label">নতুন ওয়ালপেপার / লোগো লিংক (পেস্ট করুন)</label>
+            <input id="wp-new-url" class="settings-input" type="url" autocomplete="off" placeholder="এখানে ছবির লিংক পেস্ট করুন..." />
+
+            <button id="wp-save-btn" type="button" class="settings-tick-btn mt-1">
+                <span>✓</span>
+                <span>ওয়ালপেপার সেভ করুন</span>
+            </button>
+            <div id="wp-status-msg" class="settings-status-msg"></div>
+        </div>
+    </div>
+
     <!-- পিন পরিবর্তন করার জন্য সামনে খুলে আসা বক্স -->
     <div id="pin-change-modal">
         <div class="pin-change-box">
@@ -1000,7 +1024,7 @@
             <input id="pc-old-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="আগের পিন লিখুন" />
 
             <label class="settings-label">মাস্টার কি (বড় হাতের অক্ষরে)</label>
-            <input id="pc-master-key" class="settings-input no-paste-master" type="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
+            <input id="pc-master-key" class="settings-input no-paste-master" type="password" inputmode="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
 
             <label class="settings-label">নতুন পিন</label>
             <input id="pc-new-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="নতুন পিন লিখুন" />
@@ -1364,12 +1388,31 @@ const gallery = document.getElementById('gallery');
             });
         });
 
-        // ওয়ালপেপার পরিবর্তন লজিক (আসল পিন + বড় হাতের মাস্টার কি SAJEEB প্রয়োজন)
+// ওয়ালপেপার পরিবর্তন পপআপ খোলা/বন্ধ ও লজিক (আসল পিন + বড় হাতের মাস্টার কি SAJEEB প্রয়োজন)
+        const openWpChangeBtn = document.getElementById('open-wp-change-btn');
+        const wallpaperChangeModal = document.getElementById('wallpaper-change-modal');
+        const wpChangeCloseBtn = document.getElementById('wp-change-close-btn');
         const wpCurrentPin = document.getElementById('wp-current-pin');
         const wpMasterKey = document.getElementById('wp-master-key');
         const wpNewUrl = document.getElementById('wp-new-url');
         const wpSaveBtn = document.getElementById('wp-save-btn');
         const wpStatusMsg = document.getElementById('wp-status-msg');
+
+        function closeWallpaperChangeModal() {
+            if (wallpaperChangeModal) wallpaperChangeModal.classList.remove('open');
+        }
+
+        if (openWpChangeBtn) {
+            openWpChangeBtn.addEventListener('click', () => {
+                wpStatusMsg.textContent = '';
+                wpStatusMsg.className = 'settings-status-msg';
+                wpCurrentPin.value = '';
+                wpMasterKey.value = '';
+                wpNewUrl.value = '';
+                wallpaperChangeModal.classList.add('open');
+            });
+        }
+        if (wpChangeCloseBtn) wpChangeCloseBtn.addEventListener('click', closeWallpaperChangeModal);
 
         if (wpSaveBtn) {
             wpSaveBtn.addEventListener('click', () => {
@@ -1644,8 +1687,10 @@ const gallery = document.getElementById('gallery');
         function lockWebsiteNow() {
             if (!isAppUnlocked) return;
             isAppUnlocked = false;
+            
             closeSettingsDrawer();
             closePinChangeModal();
+            closeWallpaperChangeModal();
             if (overlay.style.display === 'block') {
                 closeFullscreen();
             }
@@ -1663,15 +1708,23 @@ const gallery = document.getElementById('gallery');
 
         quickLockBtn.addEventListener('click', lockWebsiteNow);
 
-        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 সম্পূর্ণ বন্ধ + Ctrl+8 লক শর্টকাট
+        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 বন্ধ — তবে শুধু ওয়ালপেপার লিংক বক্সে (#wp-new-url) পেস্ট ও সিলেক্ট চালু থাকবে
         ['contextmenu', 'copy', 'cut', 'selectstart', 'dragstart'].forEach(evt => {
-            document.addEventListener(evt, e => e.preventDefault());
+            document.addEventListener(evt, e => {
+                if (e.target && e.target.id === 'wp-new-url') return;
+                e.preventDefault();
+            });
         });
         document.addEventListener('keydown', e => {
             if (e.ctrlKey && (e.key === '8' || e.code === 'Digit8' || e.code === 'Numpad8')) {
                 e.preventDefault();
                 lockWebsiteNow();
                 return;
+            }
+            if (e.target && e.target.id === 'wp-new-url') {
+                if ((e.ctrlKey || e.metaKey) && ['v', 'c', 'a', 'x'].includes(e.key.toLowerCase())) {
+                    return; // ওয়ালপেপার লিংক বক্সে Ctrl+V / Ctrl+A এলাউ করা হলো
+                }
             }
             if ((e.ctrlKey || e.metaKey) && ['c', 'a', 'x', 'u', 's', 'v'].includes(e.key.toLowerCase())) {
                 e.preventDefault();
