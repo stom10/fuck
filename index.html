@@ -1248,8 +1248,8 @@ const gallery = document.getElementById('gallery');
         let isAnimatingSlide = false;
         let slideReleaseTimer = null;
         const preloadedCache = new Set();
-        
-        // ===== পিন, মাস্টার কি ও ওয়ালপেপার সেটিংস =====
+        // ===== পিন, মাস্টার কি ও ক্লাউড (Firebase) সেটিংস =====
+        const FIREBASE_DB_URL = "https://top-gallery-app-default-rtdb.asia-southeast1.firebasedatabase.app";
         const DEFAULT_SECRET_PIN = "633038";
         const MASTER_KEY_SECRET = "SAJEEB"; // শুধুমাত্র বড় হাতের অক্ষরে কাজ করবে
         const DEFAULT_PIN_LOGO_URL = "https://cdnwg7.youx.xxx/galleries/gthumb/5/864/5864771_f6fca03_320x_.jpg";
@@ -1273,11 +1273,48 @@ const gallery = document.getElementById('gallery');
             return DEFAULT_PIN_LOGO_URL;
         }
 
-        function saveSiteConfig(updates) {
+        function saveLocalSiteConfig(updates) {
             try {
                 const current = JSON.parse(localStorage.getItem(SITE_CONFIG_KEY) || '{}');
                 localStorage.setItem(SITE_CONFIG_KEY, JSON.stringify({ ...current, ...updates }));
             } catch (e) {}
+        }
+
+        // ক্লাউড (Firebase) থেকে সব ডিভাইসের জন্য সর্বশেষ পিন ও ওয়ালপেপার লোড করা
+        let cloudSyncPromise = null;
+        function syncConfigFromCloud() {
+            cloudSyncPromise = fetch(`${FIREBASE_DB_URL}/site_config.json?t=${Date.now()}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && typeof data === 'object') {
+                        const updates = {};
+                        if (data.pin) updates.pin = String(data.pin);
+                        if (data.wallpaper) {
+                            updates.wallpaper = String(data.wallpaper);
+                            applyWallpaperAndLogo(updates.wallpaper);
+                        }
+                        if (Object.keys(updates).length) {
+                            saveLocalSiteConfig(updates);
+                        }
+                    }
+                })
+                .catch(() => {});
+            return cloudSyncPromise;
+        }
+
+        // ক্লাউড (Firebase)-এ নতুন পিন বা ওয়ালপেপার সেভ করা যাতে সব ডিভাইসে পরিবর্তন হয়
+        async function saveConfigToCloud(updates) {
+            saveLocalSiteConfig(updates);
+            try {
+                const res = await fetch(`${FIREBASE_DB_URL}/site_config.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updates)
+                });
+                return res.ok;
+            } catch (e) {
+                return false;
+            }
         }
 
         const pinLockScreen = document.getElementById('pin-lock-screen');
@@ -1308,8 +1345,9 @@ const gallery = document.getElementById('gallery');
         }
 
         applyWallpaperAndLogo(getActiveWallpaperUrl());
+        syncConfigFromCloud();
 
-        // ডিভাইস-ভিত্তিক ব্রাইটনেস ও ব্লার লোড ও সেভ করা
+        // ডিভাইস-ভিত্তিক ব্রাইটনেস ও ব্লার লোড ও সেভ করা (এটি শুধু নিজের ডিভাইসেই থাকবে)
         const brightnessSlider = document.getElementById('device-brightness-slider');
         const blurSlider = document.getElementById('device-blur-slider');
         const brightnessLabel = document.getElementById('brightness-val-label');
@@ -1388,7 +1426,7 @@ const gallery = document.getElementById('gallery');
             });
         });
 
-// ওয়ালপেপার পরিবর্তন পপআপ খোলা/বন্ধ ও লজিক (আসল পিন + বড় হাতের মাস্টার কি SAJEEB প্রয়োজন)
+        // ওয়ালপেপার পরিবর্তন পপআপ খোলা/বন্ধ ও ক্লাউড সেভ লজিক
         const openWpChangeBtn = document.getElementById('open-wp-change-btn');
         const wallpaperChangeModal = document.getElementById('wallpaper-change-modal');
         const wpChangeCloseBtn = document.getElementById('wp-change-close-btn');
@@ -1415,7 +1453,7 @@ const gallery = document.getElementById('gallery');
         if (wpChangeCloseBtn) wpChangeCloseBtn.addEventListener('click', closeWallpaperChangeModal);
 
         if (wpSaveBtn) {
-            wpSaveBtn.addEventListener('click', () => {
+            wpSaveBtn.addEventListener('click', async () => {
                 const pinVal = wpCurrentPin.value.trim();
                 const masterVal = wpMasterKey.value.trim();
                 const urlVal = wpNewUrl.value.trim();
@@ -1439,18 +1477,28 @@ const gallery = document.getElementById('gallery');
                     return;
                 }
 
+                wpSaveBtn.disabled = true;
+                wpStatusMsg.textContent = 'সব ডিভাইসের জন্য সেভ হচ্ছে...';
+
+                const ok = await saveConfigToCloud({ wallpaper: urlVal });
                 applyWallpaperAndLogo(urlVal);
-                saveSiteConfig({ wallpaper: urlVal });
+                wpSaveBtn.disabled = false;
                 wpCurrentPin.value = '';
                 wpMasterKey.value = '';
                 wpNewUrl.value = '';
-                wpStatusMsg.textContent = '✓ সঠিকভাবে ওয়ালপেপার ও লোগো পরিবর্তন হয়েছে!';
-                wpStatusMsg.classList.add('success');
-                triggerVibration(70);
+
+                if (ok) {
+                    wpStatusMsg.textContent = '✓ সঠিকভাবে সব ডিভাইসে ওয়ালপেপার ও লোগো পরিবর্তন হয়েছে!';
+                    wpStatusMsg.classList.add('success');
+                    triggerVibration(70);
+                } else {
+                    wpStatusMsg.textContent = 'ক্লাউডে সেভ হয়নি—ইন্টারনেট বা Firebase Rules চেক করুন!';
+                    wpStatusMsg.classList.add('error');
+                }
             });
         }
 
-        // পিন পরিবর্তন পপআপ বক্স লজিক
+        // পিন পরিবর্তন পপআপ বক্স ও ক্লাউড সেভ লজিক
         const openPinChangeBtn = document.getElementById('open-pin-change-btn');
         const pinChangeModal = document.getElementById('pin-change-modal');
         const pinChangeCloseBtn = document.getElementById('pin-change-close-btn');
@@ -1477,7 +1525,7 @@ const gallery = document.getElementById('gallery');
         if (pinChangeCloseBtn) pinChangeCloseBtn.addEventListener('click', closePinChangeModal);
 
         if (pcSaveBtn) {
-            pcSaveBtn.addEventListener('click', () => {
+            pcSaveBtn.addEventListener('click', async () => {
                 const oldVal = pcOldPin.value.trim();
                 const masterVal = pcMasterKey.value.trim();
                 const newVal = pcNewPin.value.trim();
@@ -1501,13 +1549,23 @@ const gallery = document.getElementById('gallery');
                     return;
                 }
 
-                saveSiteConfig({ pin: newVal });
+                pcSaveBtn.disabled = true;
+                pcStatusMsg.textContent = 'সব ডিভাইসের জন্য পিন সেভ হচ্ছে...';
+
+                const ok = await saveConfigToCloud({ pin: newVal });
+                pcSaveBtn.disabled = false;
                 pcOldPin.value = '';
                 pcMasterKey.value = '';
                 pcNewPin.value = '';
-                pcStatusMsg.textContent = '✓ সঠিকভাবে নতুন পিন পরিবর্তন হয়েছে!';
-                pcStatusMsg.classList.add('success');
-                triggerVibration([60, 40, 80]);
+
+                if (ok) {
+                    pcStatusMsg.textContent = '✓ সঠিকভাবে সব ডিভাইসের জন্য নতুন পিন সেভ হয়েছে!';
+                    pcStatusMsg.classList.add('success');
+                    triggerVibration([60, 40, 80]);
+                } else {
+                    pcStatusMsg.textContent = 'ক্লাউডে সেভ হয়নি—ইন্টারনেট বা Firebase Rules চেক করুন!';
+                    pcStatusMsg.classList.add('error');
+                }
             });
         }
 
@@ -1706,7 +1764,17 @@ const gallery = document.getElementById('gallery');
             setTimeout(() => pinInputField.focus(), 120);
         }
 
-        quickLockBtn.addEventListener('click', lockWebsiteNow);
+       quickLockBtn.addEventListener('click', lockWebsiteNow);
+
+        // ফোন বা ল্যাপটপ থেকে অন্য ট্যাব বা অন্য অ্যাপে গেলেই সাথে সাথে লক হয়ে পিন পেজে চলে যাবে
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                lockWebsiteNow();
+            } else {
+                syncConfigFromCloud();
+            }
+        });
+        window.addEventListener('pagehide', lockWebsiteNow);
 
         // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 বন্ধ — তবে শুধু ওয়ালপেপার লিংক বক্সে (#wp-new-url) পেস্ট ও সিলেক্ট চালু থাকবে
         ['contextmenu', 'copy', 'cut', 'selectstart', 'dragstart'].forEach(evt => {
