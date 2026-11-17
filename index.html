@@ -824,8 +824,7 @@
             user-select: text !important;
             -webkit-touch-callout: default !important;
         }
-
-        .pin-change-box {
+.pin-change-box {
             width: 100%;
             max-width: 360px;
             background: rgba(14, 16, 24, 0.96);
@@ -833,6 +832,59 @@
             border-radius: 22px;
             padding: 22px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+        }
+
+        /* সেটিংস মেনুর ক্রস বাটনের পাশে ল্যাঙ্গুয়েজ চেঞ্জ বাটন */
+        #lang-toggle-btn {
+            height: 36px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.22s ease;
+        }
+
+        #lang-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.26);
+            border-color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        /* সব বাটনের উপর মাউস রাখলে ভেসে ওঠা সুন্দর হোভার ওভারলে */
+        #custom-hover-tooltip {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999999;
+            pointer-events: none;
+            background: rgba(10, 12, 20, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+            opacity: 0;
+            transform: translate3d(0, 4px, 0) scale(0.95);
+            transition: opacity 0.16s ease, transform 0.16s ease;
+        }
+
+        #custom-hover-tooltip.visible {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
         }
     </style>
 </head>
@@ -861,7 +913,7 @@
                 />
             </div>
 
-            <button id="pin-submit-btn" type="button" aria-label="Unlock">
+            <button id="pin-submit-btn" type="button" aria-label="Unlock" data-i18n-tip="tip_unlock">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </button>
 
@@ -902,17 +954,17 @@
     </div>
     <section class="gallery-grid" id="gallery-sksk"></section>
 
-    <div id="fullscreen-overlay">
+<div id="fullscreen-overlay">
         <div class="controls">
-            <div id="autoplay-btn" class="btn">Auto Play: OFF</div>
-            <div onclick="closeFullscreen()" class="btn">Close</div>
+            <div id="autoplay-btn" class="btn" data-i18n-tip="tip_autoplay">Auto Play: OFF</div>
+            <div id="fs-close-btn" onclick="closeFullscreen()" class="btn" data-i18n="fs_close" data-i18n-tip="tip_fs_close">Close</div>
         </div>
 
-<!-- শুধুমাত্র ল্যাপটপ ও ডেস্কটপের জন্য বাম ও ডান পাশে সাদা বর্ডার ও কালো ভেতরের মোটা অ্যারো বাটন -->
-        <button id="fs-desktop-prev" type="button" class="desktop-nav-arrow left" aria-label="Previous Photo">
+        <!-- শুধুমাত্র ল্যাপটপ ও ডেস্কটপের জন্য বাম ও ডান পাশে সাদা বর্ডার ও কালো ভেতরের মোটা অ্যারো বাটন -->
+        <button id="fs-desktop-prev" type="button" class="desktop-nav-arrow left" aria-label="Previous Photo" data-i18n-tip="tip_prev_photo">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-        <button id="fs-desktop-next" type="button" class="desktop-nav-arrow right" aria-label="Next Photo">
+        <button id="fs-desktop-next" type="button" class="desktop-nav-arrow right" aria-label="Next Photo" data-i18n-tip="tip_next_photo">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
 
@@ -922,56 +974,62 @@
             <div class="fs-slide"><img id="fs-next-img" class="fs-slide-img" src="" alt="Next View"></div>
         </div>
     </div>
-    
-    
-   <div id="scroll-top" onclick="window.scrollTo(0,0)">
+
+    <div id="scroll-top" onclick="window.scrollTo(0,0)" data-i18n-tip="tip_scroll_top">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </div>
-<!-- উপরে ডান পাশে সেটিংস আইকন বাটন -->
-    <button id="settings-menu-btn" type="button" title="Settings" aria-label="Open Settings">
+
+    <!-- উপরে ডান পাশে সেটিংস আইকন বাটন -->
+    <button id="settings-menu-btn" type="button" aria-label="Open Settings" data-i18n-tip="tip_settings">
         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
 
-    <!-- সেটিংস ড্রয়ার ব্যাকড্রপ -->
+    <!-- সেটিংস ড্রয়ার ব্যাকড্রপ -->
     <div id="settings-backdrop"></div>
 
-    <!-- ডান পাশ থেকে আসা বড় সেটিংস মেনু -->
+    <!-- ডান পাশ থেকে আসা বড় সেটিংস মেনু -->
     <aside id="settings-drawer" aria-hidden="true">
         <div class="flex items-center justify-between mb-5 pb-3 border-b border-white/15">
-            <h3 class="text-white text-xl font-bold tracking-wide">সেটিংস মেনু</h3>
-            <button id="settings-close-btn" type="button" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer transition">
-                ✕
-            </button>
+            <h3 class="text-white text-xl font-bold tracking-wide" data-i18n="settings_title">Settings Menu</h3>
+            <div class="flex items-center gap-2">
+                <button id="lang-toggle-btn" type="button" aria-label="Change Language" data-i18n-tip="tip_lang_toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    <span id="lang-toggle-label">বাংলা</span>
+                </button>
+                <button id="settings-close-btn" type="button" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer transition" data-i18n-tip="tip_close">
+                    ✕
+                </button>
+            </div>
         </div>
 
-<!-- ১. ওয়ালপেপার চেঞ্জ (ছোট কার্ড — চাপ দিলে সামনে বক্স খুলবে) -->
+        <!-- ১. ওয়ালপেপার চেঞ্জ -->
         <div class="settings-section-card">
-            <h4 class="text-white text-base font-bold mb-2">ওয়ালপেপার ও লোগো</h4>
-            <p class="text-white/60 text-xs mb-3">আসল পিন এবং মাস্টার কি দিয়ে ওয়ালপেপার ও লোগোর লিংক পরিবর্তন করুন।</p>
-            <button id="open-wp-change-btn" type="button" class="settings-tick-btn">
+            <h4 class="text-white text-base font-bold mb-2" data-i18n="wp_card_title">Wallpaper & Logo</h4>
+            <p class="text-white/60 text-xs mb-3" data-i18n="wp_card_desc">Change the wallpaper and logo URL using your PIN and Master Key.</p>
+            <button id="open-wp-change-btn" type="button" class="settings-tick-btn" data-i18n-tip="tip_open_wp">
                 <span>🖼️</span>
-                <span>ওয়ালপেপার চেঞ্জ</span>
+                <span data-i18n="wp_open_btn">Change Wallpaper</span>
             </button>
         </div>
 
-        <!-- ২. পিন পরিবর্তন (ছোট কার্ড — চাপ দিলে সামনে বক্স খুলবে) -->
+        <!-- ২. পিন পরিবর্তন -->
         <div class="settings-section-card">
-            <h4 class="text-white text-base font-bold mb-2">পিন নিরাপত্তা</h4>
-            <p class="text-white/60 text-xs mb-3">আগের পিন এবং মাস্টার কি দিয়ে নতুন পিন সেট করুন।</p>
-            <button id="open-pin-change-btn" type="button" class="settings-tick-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+            <h4 class="text-white text-base font-bold mb-2" data-i18n="pin_card_title">PIN Security</h4>
+            <p class="text-white/60 text-xs mb-3" data-i18n="pin_card_desc">Set a new PIN using your previous PIN and Master Key.</p>
+            <button id="open-pin-change-btn" type="button" class="settings-tick-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);" data-i18n-tip="tip_open_pin">
                 <span>🔐</span>
-                <span>পিন পরিবর্তন</span>
+                <span data-i18n="pin_open_btn">Change PIN</span>
             </button>
         </div>
 
-        <!-- ৩. ওয়ালপেপার ব্রাইটনেস ও ঘোলা/পরিষ্কার (শুধুমাত্র এই ডিভাইসের জন্য) -->
+        <!-- ৩. ওয়ালপেপার ব্রাইটনেস ও ঘোলা/পরিষ্কার (শুধুমাত্র এই ডিভাইসের জন্য) -->
         <div class="settings-section-card">
-            <h4 class="text-white text-base font-bold mb-1">ওয়ালপেপার ব্রাইটনেস ও ঘনত্ব</h4>
-            <p class="text-white/55 text-xs mb-4">এটি শুধুমাত্র আপনার এই ডিভাইসের জন্য সেভ থাকবে।</p>
+            <h4 class="text-white text-base font-bold mb-1" data-i18n="visual_card_title">Wallpaper Brightness & Blur</h4>
+            <p class="text-white/55 text-xs mb-4" data-i18n="visual_card_desc">These settings are saved only for this device.</p>
 
             <div class="mb-4">
                 <div class="flex justify-between text-xs text-white/85 mb-1">
-                    <span>ব্রাইটনেস (Brightness)</span>
+                    <span data-i18n="brightness_label">Brightness</span>
                     <span id="brightness-val-label">68%</span>
                 </div>
                 <input id="device-brightness-slider" class="settings-range" type="range" min="0.2" max="1.5" step="0.02" value="0.68" />
@@ -979,7 +1037,7 @@
 
             <div>
                 <div class="flex justify-between text-xs text-white/85 mb-1">
-                    <span>পরিষ্কার ↔ ঘোলা (Blur)</span>
+                    <span data-i18n="blur_label">Clear ↔ Blur</span>
                     <span id="blur-val-label">0px</span>
                 </div>
                 <input id="device-blur-slider" class="settings-range" type="range" min="0" max="20" step="1" value="0" />
@@ -987,26 +1045,26 @@
         </div>
     </aside>
 
-    <!-- ওয়ালপেপার পরিবর্তনের জন্য সামনে খুলে আসা বক্স -->
+    <!-- ওয়ালপেপার পরিবর্তনের জন্য সামনে খুলে আসা বক্স -->
     <div id="wallpaper-change-modal">
         <div class="pin-change-box">
             <div class="flex items-center justify-between mb-4">
-                <h4 class="text-white text-lg font-bold">ওয়ালপেপার পরিবর্তন করুন</h4>
-                <button id="wp-change-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer">✕</button>
+                <h4 class="text-white text-lg font-bold" data-i18n="wp_modal_title">Change Wallpaper</h4>
+                <button id="wp-change-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer" data-i18n-tip="tip_close">✕</button>
             </div>
 
-            <label class="settings-label">বর্তমান পিন</label>
-            <input id="wp-current-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="বর্তমান পিন লিখুন" />
+            <label class="settings-label" data-i18n="wp_curr_pin_label">Current PIN</label>
+            <input id="wp-current-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_curr_pin" placeholder="Enter current PIN" />
 
-            <label class="settings-label">মাস্টার কি (বড় হাতের অক্ষরে)</label>
+            <label class="settings-label" data-i18n="master_key_label">Master Key (Uppercase)</label>
             <input id="wp-master-key" class="settings-input no-paste-master" type="password" inputmode="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
 
-            <label class="settings-label">নতুন ওয়ালপেপার / লোগো লিংক (পেস্ট করুন)</label>
-            <input id="wp-new-url" class="settings-input" type="url" autocomplete="off" placeholder="এখানে ছবির লিংক পেস্ট করুন..." />
+            <label class="settings-label" data-i18n="wp_url_label">New Wallpaper / Logo Link (Paste)</label>
+            <input id="wp-new-url" class="settings-input" type="url" autocomplete="off" data-i18n-placeholder="ph_wp_url" placeholder="Paste image link here..." />
 
-            <button id="wp-save-btn" type="button" class="settings-tick-btn mt-1">
+            <button id="wp-save-btn" type="button" class="settings-tick-btn mt-1" data-i18n-tip="tip_wp_save">
                 <span>✓</span>
-                <span>ওয়ালপেপার সেভ করুন</span>
+                <span data-i18n="wp_save_btn">Save Wallpaper</span>
             </button>
             <div id="wp-status-msg" class="settings-status-msg"></div>
         </div>
@@ -1016,33 +1074,36 @@
     <div id="pin-change-modal">
         <div class="pin-change-box">
             <div class="flex items-center justify-between mb-4">
-                <h4 class="text-white text-lg font-bold">পিন পরিবর্তন করুন</h4>
-                <button id="pin-change-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer">✕</button>
+                <h4 class="text-white text-lg font-bold" data-i18n="pin_modal_title">Change PIN</h4>
+                <button id="pin-change-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer" data-i18n-tip="tip_close">✕</button>
             </div>
 
-            <label class="settings-label">আগের পিন</label>
-            <input id="pc-old-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="আগের পিন লিখুন" />
+            <label class="settings-label" data-i18n="pc_old_pin_label">Previous PIN</label>
+            <input id="pc-old-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_old_pin" placeholder="Enter previous PIN" />
 
-            <label class="settings-label">মাস্টার কি (বড় হাতের অক্ষরে)</label>
+            <label class="settings-label" data-i18n="master_key_label">Master Key (Uppercase)</label>
             <input id="pc-master-key" class="settings-input no-paste-master" type="password" inputmode="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
 
-            <label class="settings-label">নতুন পিন</label>
-            <input id="pc-new-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="নতুন পিন লিখুন" />
+            <label class="settings-label" data-i18n="pc_new_pin_label">New PIN</label>
+            <input id="pc-new-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_new_pin" placeholder="Enter new PIN" />
 
-            <button id="pc-save-btn" type="button" class="settings-tick-btn mt-1">
+            <button id="pc-save-btn" type="button" class="settings-tick-btn mt-1" data-i18n-tip="tip_pin_save">
                 <span>✓</span>
-                <span>নতুন পিন সেভ করুন</span>
+                <span data-i18n="pc_save_btn">Save New PIN</span>
             </button>
             <div id="pc-status-msg" class="settings-status-msg"></div>
         </div>
     </div>
 
     <!-- ওয়েবসাইটের নিচের ডান পাশে লাল লক বাটন -->
-    <button id="quick-lock-btn" type="button" title="Lock Website (Ctrl + 8)" aria-label="Lock Website">
+    <button id="quick-lock-btn" type="button" aria-label="Lock Website" data-i18n-tip="tip_quick_lock">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
     </button>
 
     </div><!-- #app-protected-content শেষ -->
+
+    <!-- সব বাটনের জন্য হোভার ওভারলে বক্স -->
+    <div id="custom-hover-tooltip" role="tooltip"></div>
     <script>
         // --- আপনি নিচে এই লিস্টে আপনার ছবির লিঙ্কগুলো বসিয়ে দিন ---
         const imageLinks = [
@@ -1426,7 +1487,350 @@ const gallery = document.getElementById('gallery');
             });
         });
 
-        // ওয়ালপেপার পরিবর্তন পপআপ খোলা/বন্ধ ও ক্লাউড সেভ লজিক
+// ===== ভাষা (ইংরেজি <-> বাংলা) ও অটো চ্যাপ্টার ট্রান্সলেটর =====
+        const LANG_PREF_KEY = 'xsxx_lang_v1';
+        let currentLang = 'en';
+        try {
+            const savedLang = localStorage.getItem(LANG_PREF_KEY);
+            if (savedLang === 'bn' || savedLang === 'en') currentLang = savedLang;
+        } catch (e) {}
+
+        const I18N = {
+            en: {
+                settings_title: 'Settings Menu',
+                wp_card_title: 'Wallpaper & Logo',
+                wp_card_desc: 'Change the wallpaper and logo URL using your PIN and Master Key.',
+                wp_open_btn: 'Change Wallpaper',
+                pin_card_title: 'PIN Security',
+                pin_card_desc: 'Set a new PIN using your previous PIN and Master Key.',
+                pin_open_btn: 'Change PIN',
+                visual_card_title: 'Wallpaper Brightness & Blur',
+                visual_card_desc: 'These settings are saved only for this device.',
+                brightness_label: 'Brightness',
+                blur_label: 'Clear ↔ Blur',
+                wp_modal_title: 'Change Wallpaper',
+                wp_curr_pin_label: 'Current PIN',
+                master_key_label: 'Master Key (Uppercase)',
+                wp_url_label: 'New Wallpaper / Logo Link (Paste)',
+                wp_save_btn: 'Save Wallpaper',
+                pin_modal_title: 'Change PIN',
+                pc_old_pin_label: 'Previous PIN',
+                pc_new_pin_label: 'New PIN',
+                pc_save_btn: 'Save New PIN',
+                ph_curr_pin: 'Enter current PIN',
+                ph_wp_url: 'Paste image link here...',
+                ph_old_pin: 'Enter previous PIN',
+                ph_new_pin: 'Enter new PIN',
+                fs_close: 'Close',
+                autoplay_off: 'Auto Play: OFF',
+                autoplay_on: 'Auto Play: ON',
+                err_curr_pin: 'Current PIN is incorrect!',
+                err_old_pin: 'Previous PIN is incorrect!',
+                err_master_key: 'Master Key is incorrect (type in UPPERCASE)!',
+                err_valid_url: 'Please enter a valid image URL!',
+                err_enter_new_pin: 'Please enter a new PIN!',
+                saving_cloud: 'Saving for all devices...',
+                wp_saved_ok: '✓ Wallpaper & logo updated across all devices!',
+                pin_saved_ok: '✓ New PIN saved for all devices!',
+                cloud_save_fail: 'Cloud save failed — check internet or Firebase Rules!',
+                lockout_msg: (t) => `Too many wrong attempts! Try again in ${t}`,
+                wrong_pin_msg: (f) => `Wrong PIN! (${f}/5)`,
+                pin_placeholders: ['ENTER PIN', '••••••', 'UNLOCK'],
+                tip_unlock: 'Unlock',
+                tip_settings: 'Settings',
+                tip_lang_toggle: 'Switch to বাংলা',
+                tip_close: 'Close',
+                tip_open_wp: 'Change Wallpaper & Logo',
+                tip_open_pin: 'Change Security PIN',
+                tip_wp_save: 'Save Wallpaper',
+                tip_pin_save: 'Save New PIN',
+                tip_quick_lock: 'Lock Website (Ctrl + 8)',
+                tip_scroll_top: 'Back to Top',
+                tip_autoplay: 'Toggle Auto Play',
+                tip_fs_close: 'Close Fullscreen',
+                tip_prev_photo: 'Previous Photo',
+                tip_next_photo: 'Next Photo',
+                tip_all_chapters: 'All Chapters'
+            },
+            bn: {
+                settings_title: 'সেটিংস মেনু',
+                wp_card_title: 'ওয়ালপেপার ও লোগো',
+                wp_card_desc: 'আসল পিন এবং মাস্টার কি দিয়ে ওয়ালপেপার ও লোগোর লিংক পরিবর্তন করুন।',
+                wp_open_btn: 'ওয়ালপেপার চেঞ্জ',
+                pin_card_title: 'পিন নিরাপত্তা',
+                pin_card_desc: 'আগের পিন এবং মাস্টার কি দিয়ে নতুন পিন সেট করুন।',
+                pin_open_btn: 'পিন পরিবর্তন',
+                visual_card_title: 'ওয়ালপেপার ব্রাইটনেস ও ঘনত্ব',
+                visual_card_desc: 'এটি শুধুমাত্র আপনার এই ডিভাইসের জন্য সেভ থাকবে।',
+                brightness_label: 'ব্রাইটনেস (Brightness)',
+                blur_label: 'পরিষ্কার ↔ ঘোলা (Blur)',
+                wp_modal_title: 'ওয়ালপেপার পরিবর্তন করুন',
+                wp_curr_pin_label: 'বর্তমান পিন',
+                master_key_label: 'মাস্টার কি (বড় হাতের অক্ষরে)',
+                wp_url_label: 'নতুন ওয়ালপেপার / লোগো লিংক (পেস্ট করুন)',
+                wp_save_btn: 'ওয়ালপেপার সেভ করুন',
+                pin_modal_title: 'পিন পরিবর্তন করুন',
+                pc_old_pin_label: 'আগের পিন',
+                pc_new_pin_label: 'নতুন পিন',
+                pc_save_btn: 'নতুন পিন সেভ করুন',
+                ph_curr_pin: 'বর্তমান পিন লিখুন',
+                ph_wp_url: 'এখানে ছবির লিংক পেস্ট করুন...',
+                ph_old_pin: 'আগের পিন লিখুন',
+                ph_new_pin: 'নতুন পিন লিখুন',
+                fs_close: 'বন্ধ করুন',
+                autoplay_off: 'অটো প্লে: বন্ধ',
+                autoplay_on: 'অটো প্লে: চালু',
+                err_curr_pin: 'বর্তমান পিনটি সঠিক নয়!',
+                err_old_pin: 'আগের পিনটি সঠিক নয়!',
+                err_master_key: 'মাস্টার কি সঠিক নয় (বড় হাতের অক্ষরে লিখুন)!',
+                err_valid_url: 'একটি সঠিক ছবির লিংক দিন!',
+                err_enter_new_pin: 'নতুন পিন লিখুন!',
+                saving_cloud: 'সব ডিভাইসের জন্য সেভ হচ্ছে...',
+                wp_saved_ok: '✓ সঠিকভাবে সব ডিভাইসে ওয়ালপেপার ও লোগো পরিবর্তন হয়েছে!',
+                pin_saved_ok: '✓ সঠিকভাবে সব ডিভাইসের জন্য নতুন পিন সেভ হয়েছে!',
+                cloud_save_fail: 'ক্লাউডে সেভ হয়নি—ইন্টারনেট বা Firebase Rules চেক করুন!',
+                lockout_msg: (t) => `অনেকবার ভুল পিন! ${t} পর আবার চেষ্টা করুন`,
+                wrong_pin_msg: (f) => `ভুল পিন! (${f}/5)`,
+                pin_placeholders: ['পিন লিখুন', '••••••', 'আনলক করুন'],
+                tip_unlock: 'আনলক করুন',
+                tip_settings: 'সেটিংস',
+                tip_lang_toggle: 'Switch to English',
+                tip_close: 'বন্ধ করুন',
+                tip_open_wp: 'ওয়ালপেপার ও লোগো পরিবর্তন',
+                tip_open_pin: 'পিন পরিবর্তন করুন',
+                tip_wp_save: 'ওয়ালপেপার সেভ করুন',
+                tip_pin_save: 'নতুন পিন সেভ করুন',
+                tip_quick_lock: 'ওয়েবসাইট লক করুন (Ctrl + 8)',
+                tip_scroll_top: 'উপরে যান',
+                tip_autoplay: 'অটো প্লে চালু/বন্ধ করুন',
+                tip_fs_close: 'ফুলস্ক্রিন বন্ধ করুন',
+                tip_prev_photo: 'আগের ছবি',
+                tip_next_photo: 'পরের ছবি',
+                tip_all_chapters: 'সব চ্যাপ্টার'
+            }
+        };
+
+        function t(key, arg) {
+            const pack = I18N[currentLang] || I18N.en;
+            const val = pack[key] !== undefined ? pack[key] : I18N.en[key];
+            return typeof val === 'function' ? val(arg) : (val || '');
+        }
+
+        // পরিচিত ও ভবিষ্যতের নতুন চ্যাপ্টারের নাম অটোমেটিক ইংরেজি <-> বাংলা করার ইঞ্জিন
+        const CHAPTER_STATIC_MAP = {
+            'সানি লিওন': { en: 'Sunny Leone', bn: 'সানি লিওন' },
+            'sunny leone': { en: 'Sunny Leone', bn: 'সানি লিওন' },
+            'alyx star': { en: 'Alyx Star', bn: 'অ্যালেক্স স্টার' },
+            'অ্যালেক্স স্টার': { en: 'Alyx Star', bn: 'অ্যালেক্স স্টার' },
+            'মিয়াঁ খলিফা': { en: 'Mia Khalifa', bn: 'মিয়াঁ খলিফা' },
+            'মিয়া খলিফা': { en: 'Mia Khalifa', bn: 'মিয়া খলিফা' },
+            'mia khalifa': { en: 'Mia Khalifa', bn: 'মিয়াঁ খলিফা' },
+            'হস্তমৈথুন': { en: 'Masturbation', bn: 'হস্তমৈথুন' },
+            'masturbation': { en: 'Masturbation', bn: 'হস্তমৈথুন' },
+            'সেরা কিছু': { en: 'Best Picks', bn: 'সেরা কিছু' },
+            'best picks': { en: 'Best Picks', bn: 'সেরা কিছু' }
+        };
+
+        const BN_WORD_DICT = {
+            'নতুন': 'New', 'সেরা': 'Best', 'কিছু': 'Some', 'ছবি': 'Photos',
+            'গ্যালারি': 'Gallery', 'বিশেষ': 'Special', 'সুন্দর': 'Beautiful',
+            'হট': 'Hot', 'সেক্সি': 'Sexy', 'ভিডিও': 'Videos', 'পছন্দ': 'Favorites',
+            'অন্যান্য': 'Others', 'সংগ্রহ': 'Collection', 'চ্যাপ্টার': 'Chapter',
+            'সব': 'All', 'মডেল': 'Model', 'দেশি': 'Desi', 'বিদেশি': 'Foreign'
+        };
+
+        const EN_WORD_DICT = {
+            'new': 'নতুন', 'best': 'সেরা', 'picks': 'পছন্দ', 'some': 'কিছু',
+            'photos': 'ছবি', 'photo': 'ছবি', 'gallery': 'গ্যালারি', 'special': 'বিশেষ',
+            'beautiful': 'সুন্দর', 'hot': 'হট', 'sexy': 'সেক্সি', 'videos': 'ভিডিও',
+            'favorites': 'পছন্দ', 'others': 'অন্যান্য', 'collection': 'সংগ্রহ',
+            'chapter': 'চ্যাপ্টার', 'all': 'সব', 'model': 'মডেল', 'star': 'স্টার'
+        };
+
+        function transliterateBnToEn(word) {
+            const vMap = { 'অ':'o','আ':'a','ই':'i','ঈ':'ee','উ':'u','ঊ':'oo','ঋ':'ri','এ':'e','ঐ':'oi','ও':'o','ঔ':'ou' };
+            const kMap = { 'া':'a','ি':'i','ী':'ee','ু':'u','ূ':'oo','ৃ':'ri','ে':'e','ৈ':'oi','ো':'o','ৌ':'ou' };
+            const cMap = {
+                'ক':'k','খ':'kh','গ':'g','ঘ':'gh','ঙ':'ng','চ':'ch','ছ':'chh','জ':'j','ঝ':'jh','ঞ':'n',
+                'ট':'t','ঠ':'th','ড':'d','ঢ':'dh','ণ':'n','ত':'t','থ':'th','দ':'d','ধ':'dh','ন':'n',
+                'প':'p','ফ':'f','ব':'b','ভ':'bh','ম':'m','য':'j','র':'r','ল':'l','শ':'sh','ষ':'sh',
+                'স':'s','হ':'h','ড়':'r','ঢ়':'rh','য়':'y','ৎ':'t','ং':'ng','ঃ':'h','ঁ':''
+            };
+            let out = '';
+            const chars = Array.from(word);
+            for (let i = 0; i < chars.length; i++) {
+                const ch = chars[i];
+                const next = chars[i + 1];
+                if (vMap[ch] !== undefined) { out += vMap[ch]; continue; }
+                if (kMap[ch] !== undefined) { out += kMap[ch]; continue; }
+                if (ch === '্') continue;
+                if (cMap[ch] !== undefined) {
+                    out += cMap[ch];
+                    const nextIsCons = next && cMap[next] !== undefined;
+                    const prevWasVirama = i > 0 && chars[i - 1] === '্';
+                    if (nextIsCons && !prevWasVirama && next !== 'ং' && next !== 'ঃ' && next !== 'ঁ') {
+                        out += 'a';
+                    }
+                    continue;
+                }
+                out += ch;
+            }
+            return out ? out.charAt(0).toUpperCase() + out.slice(1) : word;
+        }
+
+        function transliterateEnToBn(word) {
+            const digraphs = [
+                ['sh','শ'],['ch','চ'],['kh','খ'],['gh','ঘ'],['th','থ'],['dh','ধ'],
+                ['ph','ফ'],['bh','ভ'],['jh','ঝ'],['ng','ং'],['ee','ী'],['oo','ু'],['ou','ৌ'],['oi','ৈ']
+            ];
+            const singles = {
+                'a':'া','b':'ব','c':'ক','d':'দ','e':'ে','f':'ফ','g':'গ','h':'হ','i':'ি','j':'জ',
+                'k':'ক','l':'ল','m':'ম','n':'ন','o':'ো','p':'প','q':'ক','r':'র','s':'স','t':'ত',
+                'u':'ু','v':'ভ','w':'ও','x':'ক্স','y':'য়','z':'জ'
+            };
+            const initVowels = { 'a':'আ','e':'এ','i':'ই','o':'ও','u':'উ' };
+            let w = word.toLowerCase();
+            let out = '';
+            let i = 0;
+            while (i < w.length) {
+                if (i === 0 && initVowels[w[i]]) {
+                    out += initVowels[w[i]];
+                    i++;
+                    continue;
+                }
+                const pair = w.slice(i, i + 2);
+                const dg = digraphs.find(d => d[0] === pair);
+                if (dg) {
+                    out += dg[1];
+                    i += 2;
+                    continue;
+                }
+                out += singles[w[i]] || w[i];
+                i++;
+            }
+            return out;
+        }
+
+        function getChapterDisplayName(chapter, lang = currentLang) {
+            if (!chapter) return '';
+            if (lang === 'en' && chapter.nameEn) return chapter.nameEn;
+            if (lang === 'bn' && chapter.nameBn) return chapter.nameBn;
+
+            const raw = (chapter.name || '').trim();
+            if (!raw) return '';
+            const staticHit = CHAPTER_STATIC_MAP[raw.toLowerCase()];
+            if (staticHit) return staticHit[lang] || raw;
+
+            const hasBengali = /[\u0980-\u09FF]/.test(raw);
+            if (hasBengali) {
+                if (lang === 'bn') return raw;
+                return raw.split(/\s+/).map(w => BN_WORD_DICT[w] || transliterateBnToEn(w)).join(' ');
+            } else {
+                if (lang === 'en') {
+                    return raw.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                }
+                return raw.split(/\s+/).map(w => EN_WORD_DICT[w.toLowerCase()] || transliterateEnToBn(w)).join(' ');
+            }
+        }
+
+        // হোভার ওভারলে (Tooltip) কন্ট্রোলার
+        const customHoverTooltip = document.getElementById('custom-hover-tooltip');
+        let activeTooltipTarget = null;
+
+        function positionHoverTooltip(el) {
+            if (!customHoverTooltip || !el) return;
+            const rect = el.getBoundingClientRect();
+            const ttRect = customHoverTooltip.getBoundingClientRect();
+            let top = rect.top - ttRect.height - 8;
+            if (top < 8) top = rect.bottom + 8;
+            let left = rect.left + (rect.width - ttRect.width) / 2;
+            left = Math.max(8, Math.min(window.innerWidth - ttRect.width - 8, left));
+            customHoverTooltip.style.top = `${top}px`;
+            customHoverTooltip.style.left = `${left}px`;
+        }
+
+        function hideHoverTooltip() {
+            activeTooltipTarget = null;
+            if (customHoverTooltip) customHoverTooltip.classList.remove('visible');
+        }
+
+        document.addEventListener('mouseover', (e) => {
+            const target = e.target && e.target.closest ? e.target.closest('[data-tooltip]') : null;
+            if (!target || !customHoverTooltip) return;
+            const text = target.getAttribute('data-tooltip');
+            if (!text) return;
+            activeTooltipTarget = target;
+            customHoverTooltip.textContent = text;
+            customHoverTooltip.classList.add('visible');
+            positionHoverTooltip(target);
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (!activeTooltipTarget) return;
+            const rel = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('[data-tooltip]') : null;
+            if (rel !== activeTooltipTarget) {
+                hideHoverTooltip();
+            }
+        });
+
+        ['click', 'touchstart', 'scroll'].forEach(evt => {
+            window.addEventListener(evt, hideHoverTooltip, { passive: true });
+        });
+
+        function applyLanguage(lang) {
+            currentLang = (lang === 'bn') ? 'bn' : 'en';
+            try { localStorage.setItem(LANG_PREF_KEY, currentLang); } catch (e) {}
+            document.documentElement.lang = currentLang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (key) el.textContent = t(key);
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (key) el.placeholder = t(key);
+            });
+
+            document.querySelectorAll('[data-i18n-tip]').forEach(el => {
+                const key = el.getAttribute('data-i18n-tip');
+                if (key) el.setAttribute('data-tooltip', t(key));
+            });
+
+            const langLabel = document.getElementById('lang-toggle-label');
+            if (langLabel) langLabel.textContent = currentLang === 'en' ? 'বাংলা' : 'EN';
+
+            if (autoPlayBtn) {
+                autoPlayBtn.textContent = isAutoPlaying ? t('autoplay_on') : t('autoplay_off');
+            }
+
+            if (pinInputField && !pinInputField.value) {
+                pinInputField.placeholder = t('pin_placeholders')[0];
+            }
+
+            if (hasGalleryInitialized) {
+                renderFilterButtons();
+                renderGalleryView();
+            }
+
+            if (typeof updateLockoutUI === 'function') updateLockoutUI();
+            if (activeTooltipTarget) {
+                const updatedTip = activeTooltipTarget.getAttribute('data-tooltip');
+                if (updatedTip && customHoverTooltip) {
+                    customHoverTooltip.textContent = updatedTip;
+                    positionHoverTooltip(activeTooltipTarget);
+                }
+            }
+        }
+
+        const langToggleBtn = document.getElementById('lang-toggle-btn');
+        if (langToggleBtn) {
+            langToggleBtn.addEventListener('click', () => {
+                applyLanguage(currentLang === 'en' ? 'bn' : 'en');
+            });
+        }
+
+        // ওয়ালপেপার পরিবর্তন পপআপ খোলা/বন্ধ ও ক্লাউড সেভ লজিক
         const openWpChangeBtn = document.getElementById('open-wp-change-btn');
         const wallpaperChangeModal = document.getElementById('wallpaper-change-modal');
         const wpChangeCloseBtn = document.getElementById('wp-change-close-btn');
@@ -1460,25 +1864,25 @@ const gallery = document.getElementById('gallery');
 
                 wpStatusMsg.className = 'settings-status-msg';
                 if (pinVal !== getActivePin()) {
-                    wpStatusMsg.textContent = 'বর্তমান পিনটি সঠিক নয়!';
+                    wpStatusMsg.textContent = t('err_curr_pin');
                     wpStatusMsg.classList.add('error');
                     triggerVibration([100, 50, 100]);
                     return;
                 }
                 if (masterVal !== MASTER_KEY_SECRET) {
-                    wpStatusMsg.textContent = 'মাস্টার কি সঠিক নয় (বড় হাতের অক্ষরে লিখুন)!';
+                    wpStatusMsg.textContent = t('err_master_key');
                     wpStatusMsg.classList.add('error');
                     triggerVibration([100, 50, 100]);
                     return;
                 }
                 if (!urlVal || !/^https?:\/\/.+/i.test(urlVal)) {
-                    wpStatusMsg.textContent = 'একটি সঠিক ছবির লিংক দিন!';
+                    wpStatusMsg.textContent = t('err_valid_url');
                     wpStatusMsg.classList.add('error');
                     return;
                 }
 
                 wpSaveBtn.disabled = true;
-                wpStatusMsg.textContent = 'সব ডিভাইসের জন্য সেভ হচ্ছে...';
+                wpStatusMsg.textContent = t('saving_cloud');
 
                 const ok = await saveConfigToCloud({ wallpaper: urlVal });
                 applyWallpaperAndLogo(urlVal);
@@ -1488,11 +1892,11 @@ const gallery = document.getElementById('gallery');
                 wpNewUrl.value = '';
 
                 if (ok) {
-                    wpStatusMsg.textContent = '✓ সঠিকভাবে সব ডিভাইসে ওয়ালপেপার ও লোগো পরিবর্তন হয়েছে!';
+                    wpStatusMsg.textContent = t('wp_saved_ok');
                     wpStatusMsg.classList.add('success');
                     triggerVibration(70);
                 } else {
-                    wpStatusMsg.textContent = 'ক্লাউডে সেভ হয়নি—ইন্টারনেট বা Firebase Rules চেক করুন!';
+                    wpStatusMsg.textContent = t('cloud_save_fail');
                     wpStatusMsg.classList.add('error');
                 }
             });
@@ -1532,25 +1936,25 @@ const gallery = document.getElementById('gallery');
 
                 pcStatusMsg.className = 'settings-status-msg';
                 if (oldVal !== getActivePin()) {
-                    pcStatusMsg.textContent = 'আগের পিনটি সঠিক নয়!';
+                    pcStatusMsg.textContent = t('err_old_pin');
                     pcStatusMsg.classList.add('error');
                     triggerVibration([100, 50, 100]);
                     return;
                 }
                 if (masterVal !== MASTER_KEY_SECRET) {
-                    pcStatusMsg.textContent = 'মাস্টার কি সঠিক নয় (বড় হাতের অক্ষরে লিখুন)!';
+                    pcStatusMsg.textContent = t('err_master_key');
                     pcStatusMsg.classList.add('error');
                     triggerVibration([100, 50, 100]);
                     return;
                 }
                 if (!newVal || newVal.length < 1) {
-                    pcStatusMsg.textContent = 'নতুন পিন লিখুন!';
+                    pcStatusMsg.textContent = t('err_enter_new_pin');
                     pcStatusMsg.classList.add('error');
                     return;
                 }
 
                 pcSaveBtn.disabled = true;
-                pcStatusMsg.textContent = 'সব ডিভাইসের জন্য পিন সেভ হচ্ছে...';
+                pcStatusMsg.textContent = t('saving_cloud');
 
                 const ok = await saveConfigToCloud({ pin: newVal });
                 pcSaveBtn.disabled = false;
@@ -1559,23 +1963,23 @@ const gallery = document.getElementById('gallery');
                 pcNewPin.value = '';
 
                 if (ok) {
-                    pcStatusMsg.textContent = '✓ সঠিকভাবে সব ডিভাইসের জন্য নতুন পিন সেভ হয়েছে!';
+                    pcStatusMsg.textContent = t('pin_saved_ok');
                     pcStatusMsg.classList.add('success');
                     triggerVibration([60, 40, 80]);
                 } else {
-                    pcStatusMsg.textContent = 'ক্লাউডে সেভ হয়নি—ইন্টারনেট বা Firebase Rules চেক করুন!';
+                    pcStatusMsg.textContent = t('cloud_save_fail');
                     pcStatusMsg.classList.add('error');
                 }
             });
         }
 
         // প্লেসহোল্ডার এনিমেশন টেক্সট ঘোরানো (কত সংখ্যার পিন তা না বলে)
-        const pinPlaceholders = ["ENTER PIN", "••••••", "UNLOCK"];
         let phIdx = 0;
         setInterval(() => {
             if (!isAppUnlocked && pinInputField && !pinInputField.disabled && !pinInputField.value) {
-                phIdx = (phIdx + 1) % pinPlaceholders.length;
-                pinInputField.placeholder = pinPlaceholders[phIdx];
+                const list = t('pin_placeholders');
+                phIdx = (phIdx + 1) % list.length;
+                pinInputField.placeholder = list[phIdx];
             }
         }, 1600);
 
@@ -1614,7 +2018,7 @@ const gallery = document.getElementById('gallery');
 
                 pinInputField.disabled = true;
                 pinSubmitBtn.disabled = true;
-                pinLockoutMsg.textContent = `অনেকবার ভুল পিন! ${timeText} পর আবার চেষ্টা করুন`;
+                pinLockoutMsg.textContent = t('lockout_msg', timeText);
 
                 if (!lockoutTicker) {
                     lockoutTicker = setInterval(updateLockoutUI, 500);
@@ -1631,6 +2035,8 @@ const gallery = document.getElementById('gallery');
                     state.fails = 0;
                     saveGuardState(state);
                     pinLockoutMsg.textContent = '';
+                } else if (state.fails > 0 && pinLockoutMsg.textContent) {
+                    pinLockoutMsg.textContent = t('wrong_pin_msg', state.fails);
                 }
             }
         }
@@ -1711,7 +2117,7 @@ const gallery = document.getElementById('gallery');
                     pinInputWrap.classList.add('pin-error');
                     pinSubmitBtn.classList.add('pin-btn-error');
                     triggerVibration([120, 50, 120]);
-                    pinLockoutMsg.textContent = `ভুল পিন! (${state.fails}/5)`;
+                    pinLockoutMsg.textContent = t('wrong_pin_msg', state.fails);
 
                     setTimeout(() => {
                         pinInputWrap.classList.remove('pin-error');
@@ -1745,7 +2151,7 @@ const gallery = document.getElementById('gallery');
         function lockWebsiteNow() {
             if (!isAppUnlocked) return;
             isAppUnlocked = false;
-            
+            hideHoverTooltip();
             closeSettingsDrawer();
             closePinChangeModal();
             closeWallpaperChangeModal();
@@ -1764,9 +2170,9 @@ const gallery = document.getElementById('gallery');
             setTimeout(() => pinInputField.focus(), 120);
         }
 
-       quickLockBtn.addEventListener('click', lockWebsiteNow);
+        quickLockBtn.addEventListener('click', lockWebsiteNow);
 
-        // ফোন বা ল্যাপটপ থেকে অন্য ট্যাব বা অন্য অ্যাপে গেলেই সাথে সাথে লক হয়ে পিন পেজে চলে যাবে
+        // ফোন বা ল্যাপটপ থেকে অন্য ট্যাব বা অন্য অ্যাপে গেলেই সাথে সাথে লক হয়ে পিন পেজে চলে যাবে
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 lockWebsiteNow();
@@ -1776,7 +2182,7 @@ const gallery = document.getElementById('gallery');
         });
         window.addEventListener('pagehide', lockWebsiteNow);
 
-        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 বন্ধ — তবে শুধু ওয়ালপেপার লিংক বক্সে (#wp-new-url) পেস্ট ও সিলেক্ট চালু থাকবে
+        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 বন্ধ — তবে শুধু ওয়ালপেপার লিংক বক্সে (#wp-new-url) পেস্ট ও সিলেক্ট চালু থাকবে
         ['contextmenu', 'copy', 'cut', 'selectstart', 'dragstart'].forEach(evt => {
             document.addEventListener(evt, e => {
                 if (e.target && e.target.id === 'wp-new-url') return;
@@ -1791,7 +2197,7 @@ const gallery = document.getElementById('gallery');
             }
             if (e.target && e.target.id === 'wp-new-url') {
                 if ((e.ctrlKey || e.metaKey) && ['v', 'c', 'a', 'x'].includes(e.key.toLowerCase())) {
-                    return; // ওয়ালপেপার লিংক বক্সে Ctrl+V / Ctrl+A এলাউ করা হলো
+                    return; // ওয়ালপেপার লিংক বক্সে Ctrl+V / Ctrl+A এলাউ করা হলো
                 }
             }
             if ((e.ctrlKey || e.metaKey) && ['c', 'a', 'x', 'u', 's', 'v'].includes(e.key.toLowerCase())) {
@@ -1801,8 +2207,7 @@ const gallery = document.getElementById('gallery');
                 e.preventDefault();
             }
         });
-
-        updateLockoutUI();
+        applyLanguage(currentLang);
         // ২. পাশের ছবিগুলো যেন ০ সেকেন্ডে সাথে সাথে চলে আসে তার জন্য মেমোরি প্রিলোডার
         function preloadSingleImage(url) {
             if (!url || preloadedCache.has(url)) return;
@@ -1866,7 +2271,7 @@ const gallery = document.getElementById('gallery');
             return list;
         }
 
-        // টাইটেলের নিচে অটোমেটিক ALL এবং CH 1, CH 2, CH 3... বাটন তৈরি করা
+// টাইটেলের নিচে অটোমেটিক ALL এবং CH 1, CH 2, CH 3... বাটন তৈরি করা (বাটনের লেখা অপরিবর্তিত থাকবে, শুধু হোভার ওভারলে ভাষা বদলাবে)
         function renderFilterButtons() {
             const filterBar = document.getElementById('chapter-filter-bar');
             if (!filterBar) return;
@@ -1875,6 +2280,7 @@ const gallery = document.getElementById('gallery');
             const allBtn = document.createElement('button');
             allBtn.className = `ch-filter-btn ${activeFilterChapterIdx === 'all' ? 'active' : ''}`;
             allBtn.textContent = 'ALL';
+            allBtn.setAttribute('data-tooltip', t('tip_all_chapters'));
             allBtn.onclick = () => selectChapterFilter('all');
             filterBar.appendChild(allBtn);
 
@@ -1882,7 +2288,7 @@ const gallery = document.getElementById('gallery');
                 const btn = document.createElement('button');
                 btn.className = `ch-filter-btn ${activeFilterChapterIdx === idx ? 'active' : ''}`;
                 btn.textContent = `CH ${idx + 1}`;
-                btn.title = ch.name;
+                btn.setAttribute('data-tooltip', getChapterDisplayName(ch, currentLang));
                 btn.onclick = () => selectChapterFilter(idx);
                 filterBar.appendChild(btn);
             });
@@ -1916,21 +2322,23 @@ const gallery = document.getElementById('gallery');
 
             if (activeFilterChapterIdx === 'all') {
                 if (firstTitleWrap) firstTitleWrap.style.display = 'block';
+                const ch0Name = allChaptersList[0] ? getChapterDisplayName(allChaptersList[0], currentLang) : '';
                 if (firstTitleEl && allChaptersList[0]) {
-                    firstTitleEl.textContent = allChaptersList[0].name;
+                    firstTitleEl.textContent = ch0Name;
                 }
                 if (allChaptersList[0]) {
                     allChaptersList[0].links.forEach((imgUrl, idx) => {
-                        gallery.appendChild(createChapterCard(imgUrl, 0, idx, allChaptersList[0].name));
+                        gallery.appendChild(createChapterCard(imgUrl, 0, idx, ch0Name));
                     });
                 }
 
                 if (allChaptersList[1]) {
+                    const ch1Name = getChapterDisplayName(allChaptersList[1], currentLang);
                     if (secondTitleWrap) secondTitleWrap.style.display = 'block';
-                    if (secondChapterTitle) secondChapterTitle.textContent = allChaptersList[1].name;
+                    if (secondChapterTitle) secondChapterTitle.textContent = ch1Name;
                     gallerySksk.style.display = 'grid';
                     allChaptersList[1].links.forEach((imgUrl, idx) => {
-                        gallerySksk.appendChild(createChapterCard(imgUrl, 1, idx, allChaptersList[1].name));
+                        gallerySksk.appendChild(createChapterCard(imgUrl, 1, idx, ch1Name));
                     });
                 } else {
                     if (secondTitleWrap) secondTitleWrap.style.display = 'none';
@@ -1939,16 +2347,17 @@ const gallery = document.getElementById('gallery');
 
                 allChaptersList.slice(2).forEach((chapter, sliceIdx) => {
                     const realChapterIdx = sliceIdx + 2;
+                    const chName = getChapterDisplayName(chapter, currentLang);
                     const titleDiv = document.createElement('div');
                     titleDiv.className = 'w-full max-w-6xl mx-auto px-6 pt-8 pb-2 text-left';
-                    titleDiv.innerHTML = `<h2 class="text-white text-2xl font-light opacity-80">${chapter.name}</h2>`;
+                    titleDiv.innerHTML = `<h2 class="text-white text-2xl font-light opacity-80">${chName}</h2>`;
                     extraContainer.appendChild(titleDiv);
 
                     const sec = document.createElement('section');
                     sec.className = 'gallery-grid';
 
                     chapter.links.forEach((imgUrl, idx) => {
-                        sec.appendChild(createChapterCard(imgUrl, realChapterIdx, idx, chapter.name));
+                        sec.appendChild(createChapterCard(imgUrl, realChapterIdx, idx, chName));
                     });
 
                     extraContainer.appendChild(sec);
@@ -1956,14 +2365,15 @@ const gallery = document.getElementById('gallery');
             } else {
                 const selectedChapter = allChaptersList[activeFilterChapterIdx];
                 if (!selectedChapter) return;
+                const selName = getChapterDisplayName(selectedChapter, currentLang);
 
                 if (firstTitleWrap) firstTitleWrap.style.display = 'block';
-                if (firstTitleEl) firstTitleEl.textContent = selectedChapter.name;
+                if (firstTitleEl) firstTitleEl.textContent = selName;
                 if (secondTitleWrap) secondTitleWrap.style.display = 'none';
                 gallerySksk.style.display = 'none';
 
                 selectedChapter.links.forEach((imgUrl, idx) => {
-                    gallery.appendChild(createChapterCard(imgUrl, activeFilterChapterIdx, idx, selectedChapter.name));
+                    gallery.appendChild(createChapterCard(imgUrl, activeFilterChapterIdx, idx, selName));
                 });
             }
         }
@@ -2290,10 +2700,10 @@ const gallery = document.getElementById('gallery');
             else startAutoPlay();
         }
 
-        function startAutoPlay() {
+function startAutoPlay() {
             stopAutoPlay();
             isAutoPlaying = true;
-            autoPlayBtn.innerText = "Auto Play: ON";
+            autoPlayBtn.innerText = t('autoplay_on');
             autoPlayInterval = setInterval(() => {
                 if (!isDragging && !isAnimatingSlide) {
                     nextImg();
@@ -2303,7 +2713,7 @@ const gallery = document.getElementById('gallery');
 
         function stopAutoPlay() {
             isAutoPlaying = false;
-            autoPlayBtn.innerText = "Auto Play: OFF";
+            autoPlayBtn.innerText = t('autoplay_off');
             if (autoPlayInterval) {
                 clearInterval(autoPlayInterval);
                 autoPlayInterval = null;
