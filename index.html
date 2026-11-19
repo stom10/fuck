@@ -818,11 +818,265 @@
             display: flex;
         }
 
-        /* ওয়ালপেপার লিংক বক্সে ফোনে ও পিসিতে সহজে পেস্ট করার জন্য সিলেকশন চালু */
-        #wp-new-url {
+       /* ওয়ালপেপার লিংক ও এডিট প্যানেলের ইনপুট বক্সে সহজে পেস্ট ও সিলেক্ট করার সুবিধা */
+        #wp-new-url,
+        .allow-paste-input {
             -webkit-user-select: text !important;
             user-select: text !important;
             -webkit-touch-callout: default !important;
+        }
+
+        /* এডিট ট্যাবে ঢোকার আগে পিন ভেরিফিকেশন পপআপ */
+        #edit-auth-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 995;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #edit-auth-modal.open {
+            display: flex;
+        }
+
+        /* ===== এডিট ফুল-স্ক্রিন ট্যাব (মূল ওয়ালপেপারসহ) ===== */
+        #edit-panel-tab {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            z-index: 990;
+            display: none;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #0b0b0f;
+        }
+
+        #edit-panel-tab.open {
+            display: block;
+        }
+
+        #edit-panel-tab::before {
+            content: "";
+            position: fixed;
+            inset: -24px;
+            background-image: var(--bg-wallpaper);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            filter: brightness(var(--bg-brightness)) blur(var(--bg-blur));
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #edit-panel-tab::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 10, 16, 0.62);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .edit-tab-inner {
+            position: relative;
+            z-index: 2;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 18px 16px 60px 16px;
+        }
+
+        .edit-tab-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            border-radius: 18px;
+            background: rgba(12, 14, 22, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+        }
+
+        .edit-card {
+            background: rgba(14, 16, 26, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+        }
+
+        .edit-textarea {
+            width: 100%;
+            min-height: 86px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            color: #ffffff;
+            padding: 10px 14px;
+            font-size: 13px;
+            outline: none;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        .edit-textarea:focus,
+        .edit-select:focus {
+            border-color: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.22);
+        }
+
+        .edit-select {
+            width: 100%;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(10, 12, 20, 0.92);
+            border: 1.5px solid rgba(255, 255, 255, 0.24);
+            color: #ffffff;
+            padding: 0 12px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .edit-chapter-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .edit-chapter-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .edit-chapter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-pos-select {
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .edit-mini-btn {
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .edit-mini-btn:hover {
+            background: rgba(255, 255, 255, 0.26);
+            transform: translateY(-1px);
+        }
+
+        .edit-mini-btn.preview-active {
+            background: #2563eb;
+            border-color: #93c5fd;
+        }
+
+        .edit-mini-btn.danger {
+            background: rgba(220, 38, 38, 0.22);
+            border-color: rgba(248, 113, 113, 0.55);
+            color: #fecaca;
+        }
+
+        .edit-mini-btn.danger:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .edit-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .edit-thumb-box {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(0, 0, 0, 0.45);
+            aspect-ratio: 1 / 1;
+        }
+
+        .edit-thumb-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .edit-thumb-del {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(220, 38, 38, 0.92);
+            border: 1.5px solid #ffffff;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+            transition: transform 0.18s ease, background-color 0.18s ease;
+        }
+
+        .edit-thumb-del:hover {
+            background: #ef4444;
+            transform: scale(1.12);
         }
 .pin-change-box {
             width: 100%;
@@ -1011,17 +1265,15 @@
                 <span data-i18n="wp_open_btn">Change Wallpaper</span>
             </button>
         </div>
-
-        <!-- ২. পিন পরিবর্তন -->
+<!-- ২. এডিট প্যানেল -->
         <div class="settings-section-card">
-            <h4 class="text-white text-base font-bold mb-2" data-i18n="pin_card_title">PIN Security</h4>
-            <p class="text-white/60 text-xs mb-3" data-i18n="pin_card_desc">Set a new PIN using your previous PIN and Master Key.</p>
-            <button id="open-pin-change-btn" type="button" class="settings-tick-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);" data-i18n-tip="tip_open_pin">
-                <span>🔐</span>
-                <span data-i18n="pin_open_btn">Change PIN</span>
+            <h4 class="text-white text-base font-bold mb-2" data-i18n="edit_card_title">Edit</h4>
+            <p class="text-white/60 text-xs mb-3" data-i18n="edit_card_desc">Manage chapters, upload or delete photos, reorder chapters, and change PIN.</p>
+            <button id="open-edit-auth-btn" type="button" class="settings-tick-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);" data-i18n-tip="tip_open_edit">
+                <span>✏️</span>
+                <span data-i18n="edit_open_btn">Edit</span>
             </button>
         </div>
-
         <!-- ৩. ওয়ালপেপার ব্রাইটনেস ও ঘোলা/পরিষ্কার (শুধুমাত্র এই ডিভাইসের জন্য) -->
         <div class="settings-section-card">
             <h4 class="text-white text-base font-bold mb-1" data-i18n="visual_card_title">Wallpaper Brightness & Blur</h4>
@@ -1069,32 +1321,113 @@
             <div id="wp-status-msg" class="settings-status-msg"></div>
         </div>
     </div>
-
-    <!-- পিন পরিবর্তন করার জন্য সামনে খুলে আসা বক্স -->
-    <div id="pin-change-modal">
+<!-- এডিট ট্যাবে ঢোকার আগে পিন ভেরিফিকেশন বক্স -->
+    <div id="edit-auth-modal">
         <div class="pin-change-box">
             <div class="flex items-center justify-between mb-4">
-                <h4 class="text-white text-lg font-bold" data-i18n="pin_modal_title">Change PIN</h4>
-                <button id="pin-change-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer" data-i18n-tip="tip_close">✕</button>
+                <h4 class="text-white text-lg font-bold" data-i18n="edit_auth_title">Verify PIN to Edit</h4>
+                <button id="edit-auth-close-btn" type="button" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer" data-i18n-tip="tip_close">✕</button>
             </div>
 
-            <label class="settings-label" data-i18n="pc_old_pin_label">Previous PIN</label>
-            <input id="pc-old-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_old_pin" placeholder="Enter previous PIN" />
+            <label class="settings-label" data-i18n="wp_curr_pin_label">Current PIN</label>
+            <input id="edit-auth-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_curr_pin" placeholder="Enter current PIN" />
 
-            <label class="settings-label" data-i18n="master_key_label">Master Key (Uppercase)</label>
-            <input id="pc-master-key" class="settings-input no-paste-master" type="password" inputmode="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
-
-            <label class="settings-label" data-i18n="pc_new_pin_label">New PIN</label>
-            <input id="pc-new-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_new_pin" placeholder="Enter new PIN" />
-
-            <button id="pc-save-btn" type="button" class="settings-tick-btn mt-1" data-i18n-tip="tip_pin_save">
-                <span>✓</span>
-                <span data-i18n="pc_save_btn">Save New PIN</span>
+            <button id="edit-auth-submit-btn" type="button" class="settings-tick-btn mt-1" style="background: linear-gradient(135deg, #f59e0b, #d97706);" data-i18n-tip="tip_open_edit">
+                <span>🔓</span>
+                <span data-i18n="edit_auth_btn">Open Edit Panel</span>
             </button>
-            <div id="pc-status-msg" class="settings-status-msg"></div>
+            <div id="edit-auth-msg" class="settings-status-msg"></div>
         </div>
     </div>
 
+    <!-- ===== এডিট ফুল-স্ক্রিন ট্যাব ===== -->
+    <div id="edit-panel-tab" aria-hidden="true">
+        <div class="edit-tab-inner">
+            <!-- উপরের ফিক্সড বার (ভাষা পরিবর্তন ও বন্ধ বাটন) -->
+            <div class="edit-tab-topbar">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">✏️</span>
+                    <h3 class="text-white text-lg md:text-xl font-bold tracking-wide" data-i18n="edit_tab_title">Edit Panel</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="edit-lang-toggle-btn" type="button" class="edit-mini-btn" data-i18n-tip="tip_lang_toggle">
+                        <span>🌐</span>
+                        <span id="edit-lang-toggle-label">বাংলা</span>
+                    </button>
+                    <button id="edit-tab-close-btn" type="button" class="edit-mini-btn danger" data-i18n-tip="tip_close">
+                        <span>✕</span>
+                        <span data-i18n="fs_close">Close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ১. ছবি অ্যাড করার সেকশন -->
+            <div class="edit-card">
+                <h4 class="text-white text-base font-bold mb-3" data-i18n="edit_add_photo_title">Add Photos to Chapter</h4>
+
+                <label class="settings-label" data-i18n="edit_select_ch_label">Select Chapter</label>
+                <select id="edit-photo-chapter-select" class="edit-select"></select>
+
+                <label class="settings-label" data-i18n="edit_photo_urls_label">Photo Link(s) (Paste one or multiple links separated by new line or comma)</label>
+                <textarea id="edit-photo-urls" class="edit-textarea allow-paste-input" autocomplete="off" data-i18n-placeholder="ph_edit_photo_urls" placeholder="https://example.com/photo1.jpg"></textarea>
+
+                <button id="edit-add-photo-btn" type="button" class="settings-tick-btn" data-i18n-tip="tip_add_photo">
+                    <span>➕</span>
+                    <span data-i18n="edit_add_photo_btn">Add Photo</span>
+                </button>
+                <div id="edit-photo-status" class="settings-status-msg"></div>
+            </div>
+
+            <!-- ২. নতুন চ্যাপ্টার অ্যাড করার সেকশন -->
+            <div class="edit-card">
+                <h4 class="text-white text-base font-bold mb-3" data-i18n="edit_add_ch_title">Add New Chapter</h4>
+
+                <label class="settings-label" data-i18n="edit_ch_name_label">Chapter Name</label>
+                <input id="edit-new-ch-name" class="settings-input allow-paste-input" type="text" autocomplete="off" data-i18n-placeholder="ph_edit_ch_name" placeholder="Enter chapter name..." />
+
+                <label class="settings-label" data-i18n="edit_ch_pos_label">Chapter Position</label>
+                <select id="edit-new-ch-pos" class="edit-select"></select>
+
+                <label class="settings-label" data-i18n="edit_ch_init_urls_label">Initial Photo Link(s) (Optional)</label>
+                <textarea id="edit-new-ch-urls" class="edit-textarea allow-paste-input" autocomplete="off" data-i18n-placeholder="ph_edit_photo_urls" placeholder="https://example.com/photo1.jpg"></textarea>
+
+                <button id="edit-add-chapter-btn" type="button" class="settings-tick-btn" style="background: linear-gradient(135deg, #10b981, #059669);" data-i18n-tip="tip_add_ch">
+                    <span>📂</span>
+                    <span data-i18n="edit_add_ch_btn">Add Chapter</span>
+                </button>
+                <div id="edit-chapter-status" class="settings-status-msg"></div>
+            </div>
+
+            <!-- ৩. সব চ্যাপ্টার ম্যানেজ, পজিশন চেঞ্জ, প্রিভিউ ও ছবি ডিলিট -->
+            <div class="edit-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-white text-base font-bold" data-i18n="edit_manage_ch_title">Chapters & Photo Preview</h4>
+                    <span id="edit-sync-badge" class="text-xs text-white/60"></span>
+                </div>
+                <div id="edit-chapters-list"></div>
+            </div>
+
+            <!-- ৪. পিন পরিবর্তন করার সেকশন -->
+            <div class="edit-card">
+                <h4 class="text-white text-base font-bold mb-3" data-i18n="pin_modal_title">Change PIN</h4>
+
+                <label class="settings-label" data-i18n="pc_old_pin_label">Previous PIN</label>
+                <input id="pc-old-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_old_pin" placeholder="Enter previous PIN" />
+
+                <label class="settings-label" data-i18n="master_key_label">Master Key (Uppercase)</label>
+                <input id="pc-master-key" class="settings-input no-paste-master" type="password" inputmode="text" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="MASTER KEY" />
+
+                <label class="settings-label" data-i18n="pc_new_pin_label">New PIN</label>
+                <input id="pc-new-pin" class="settings-input no-paste-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" data-i18n-placeholder="ph_new_pin" placeholder="Enter new PIN" />
+
+                <button id="pc-save-btn" type="button" class="settings-tick-btn mt-1" style="background: linear-gradient(135deg, #f59e0b, #d97706);" data-i18n-tip="tip_pin_save">
+                    <span>✓</span>
+                    <span data-i18n="pc_save_btn">Save New PIN</span>
+                </button>
+                <div id="pc-status-msg" class="settings-status-msg"></div>
+            </div>
+        </div>
+    </div>
     <!-- ওয়েবসাইটের নিচের ডান পাশে লাল লক বাটন -->
     <button id="quick-lock-btn" type="button" aria-label="Lock Website" data-i18n-tip="tip_quick_lock">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -1375,11 +1708,54 @@ const gallery = document.getElementById('gallery');
                 localStorage.setItem(SITE_CONFIG_KEY, JSON.stringify({ ...current, ...updates }));
             } catch (e) {}
         }
+const CHAPTERS_CACHE_KEY = 'xsxx_chapters_cache_v1';
 
-        // ক্লাউড (Firebase) থেকে সব ডিভাইসের জন্য সর্বশেষ পিন ও ওয়ালপেপার লোড করা
+        function normalizeChaptersData(raw) {
+            if (!Array.isArray(raw)) return null;
+            return raw
+                .filter(ch => ch && typeof ch === 'object')
+                .map(ch => ({
+                    name: String(ch.name || 'Untitled'),
+                    ...(ch.nameEn ? { nameEn: String(ch.nameEn) } : {}),
+                    ...(ch.nameBn ? { nameBn: String(ch.nameBn) } : {}),
+                    links: Array.isArray(ch.links) ? ch.links.filter(Boolean) : []
+                }));
+        }
+
+        function getCachedChapters() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(CHAPTERS_CACHE_KEY) || 'null');
+                const clean = normalizeChaptersData(raw);
+                if (clean && clean.length > 0) return clean;
+            } catch (e) {}
+            return null;
+        }
+
+        function saveLocalChaptersCache(chapters) {
+            try {
+                localStorage.setItem(CHAPTERS_CACHE_KEY, JSON.stringify(chapters));
+            } catch (e) {}
+        }
+
+        async function saveChaptersToCloud(chapters) {
+            saveLocalChaptersCache(chapters);
+            try {
+                const res = await fetch(`${FIREBASE_DB_URL}/gallery_chapters.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(chapters)
+                });
+                return res.ok;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // ক্লাউড (Firebase) থেকে সব ডিভাইসের জন্য সর্বশেষ পিন, ওয়ালপেপার ও চ্যাপ্টার লোড করা
         let cloudSyncPromise = null;
         function syncConfigFromCloud() {
-            cloudSyncPromise = fetch(`${FIREBASE_DB_URL}/site_config.json?t=${Date.now()}`)
+            const ts = Date.now();
+            const cfgReq = fetch(`${FIREBASE_DB_URL}/site_config.json?t=${ts}`)
                 .then(res => res.ok ? res.json() : null)
                 .then(data => {
                     if (data && typeof data === 'object') {
@@ -1395,9 +1771,29 @@ const gallery = document.getElementById('gallery');
                     }
                 })
                 .catch(() => {});
+
+            const chReq = fetch(`${FIREBASE_DB_URL}/gallery_chapters.json?t=${ts}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    const clean = normalizeChaptersData(data);
+                    if (clean && clean.length > 0) {
+                        saveLocalChaptersCache(clean);
+                        if (hasGalleryInitialized) {
+                            allChaptersList = clean;
+                            if (activeFilterChapterIdx !== 'all' && activeFilterChapterIdx >= allChaptersList.length) {
+                                activeFilterChapterIdx = 'all';
+                            }
+                            renderFilterButtons();
+                            renderGalleryView();
+                            if (typeof renderEditPanelUI === 'function') renderEditPanelUI();
+                        }
+                    }
+                })
+                .catch(() => {});
+
+            cloudSyncPromise = Promise.all([cfgReq, chReq]);
             return cloudSyncPromise;
         }
-
         // ক্লাউড (Firebase)-এ নতুন পিন বা ওয়ালপেপার সেভ করা যাতে সব ডিভাইসে পরিবর্তন হয়
         async function saveConfigToCloud(updates) {
             saveLocalSiteConfig(updates);
@@ -1585,7 +1981,44 @@ const gallery = document.getElementById('gallery');
                 tip_fs_close: 'Close Fullscreen',
                 tip_prev_photo: 'Previous Photo',
                 tip_next_photo: 'Next Photo',
-                tip_all_chapters: 'All Chapters'
+               tip_all_chapters: 'All Chapters',
+                edit_card_title: 'Edit',
+                edit_card_desc: 'Manage chapters, upload or delete photos, reorder chapters, and change PIN.',
+                edit_open_btn: 'Edit',
+                tip_open_edit: 'Edit Gallery, Chapters & PIN',
+                edit_auth_title: 'Verify PIN to Edit',
+                edit_auth_btn: 'Open Edit Panel',
+                edit_tab_title: 'Edit Panel',
+                edit_add_photo_title: 'Add Photos to Chapter',
+                edit_select_ch_label: 'Select Chapter',
+                edit_photo_urls_label: 'Photo Link(s) (One or multiple links separated by new line or comma)',
+                ph_edit_photo_urls: 'Paste image link(s) here...',
+                edit_add_photo_btn: 'Add Photo',
+                tip_add_photo: 'Add photo links to selected chapter',
+                edit_add_ch_title: 'Add New Chapter',
+                edit_ch_name_label: 'Chapter Name',
+                ph_edit_ch_name: 'Enter chapter name...',
+                edit_ch_pos_label: 'Chapter Position',
+                edit_ch_init_urls_label: 'Initial Photo Link(s) (Optional)',
+                edit_add_ch_btn: 'Add Chapter',
+                tip_add_ch: 'Create new chapter',
+                edit_manage_ch_title: 'Chapters & Photo Preview',
+                edit_preview_btn: 'Preview',
+                edit_hide_preview_btn: 'Hide',
+                edit_delete_ch_btn: 'Delete',
+                edit_photos_count: (n) => `${n} photos`,
+                edit_pos_first: 'Position 1 (First)',
+                edit_pos_last: (n) => `Position ${n} (Last)`,
+                edit_pos_num: (n) => `Position ${n}`,
+                edit_err_ch_name: 'Please enter a chapter name!',
+                edit_photo_added: (n) => `✓ Added ${n} photo(s) across all devices!`,
+                edit_ch_added: '✓ New chapter added across all devices!',
+                edit_ch_moved: '✓ Chapter position updated!',
+                edit_photo_deleted: '✓ Photo deleted from all devices!',
+                edit_ch_deleted: '✓ Chapter deleted from all devices!',
+                edit_confirm_del_photo: 'Delete this photo from the website?',
+                edit_confirm_del_ch: (name) => `Delete chapter "${name}" and all its photos?`,
+                edit_no_photos: 'No photos in this chapter yet.'
             },
             bn: {
                 settings_title: 'সেটিংস মেনু',
@@ -1641,7 +2074,44 @@ const gallery = document.getElementById('gallery');
                 tip_fs_close: 'ফুলস্ক্রিন বন্ধ করুন',
                 tip_prev_photo: 'আগের ছবি',
                 tip_next_photo: 'পরের ছবি',
-                tip_all_chapters: 'সব চ্যাপ্টার'
+               tip_all_chapters: 'সব চ্যাপ্টার',
+                edit_card_title: 'এডিট',
+                edit_card_desc: 'চ্যাপ্টার ও ছবি যোগ/ডিলিট, চ্যাপ্টারের অবস্থান পরিবর্তন এবং পিন পরিবর্তন করুন।',
+                edit_open_btn: 'এডিট',
+                tip_open_edit: 'গ্যালারি, চ্যাপ্টার ও পিন এডিট করুন',
+                edit_auth_title: 'এডিট করতে পিন যাচাই করুন',
+                edit_auth_btn: 'এডিট প্যানেল খুলুন',
+                edit_tab_title: 'এডিট প্যানেল',
+                edit_add_photo_title: 'চ্যাপ্টারে ছবি যোগ করুন',
+                edit_select_ch_label: 'চ্যাপ্টার সিলেক্ট করুন',
+                edit_photo_urls_label: 'ছবির লিংক (এক বা একাধিক লিংক নতুন লাইন বা কমা দিয়ে পেস্ট করুন)',
+                ph_edit_photo_urls: 'এখানে ছবির লিংক পেস্ট করুন...',
+                edit_add_photo_btn: 'ছবি যোগ করুন',
+                tip_add_photo: 'সিলেক্ট করা চ্যাপ্টারে ছবি যোগ করুন',
+                edit_add_ch_title: 'নতুন চ্যাপ্টার যোগ করুন',
+                edit_ch_name_label: 'চ্যাপ্টারের নাম',
+                ph_edit_ch_name: 'চ্যাপ্টারের নাম লিখুন...',
+                edit_ch_pos_label: 'চ্যাপ্টার কোন নাম্বারে যাবে',
+                edit_ch_init_urls_label: 'শুরুর ছবির লিংক (ঐচ্ছিক)',
+                edit_add_ch_btn: 'চ্যাপ্টার যোগ করুন',
+                tip_add_ch: 'নতুন চ্যাপ্টার তৈরি করুন',
+                edit_manage_ch_title: 'চ্যাপ্টার ও ছবির প্রিভিউ',
+                edit_preview_btn: 'প্রিভিউ',
+                edit_hide_preview_btn: 'লুকান',
+                edit_delete_ch_btn: 'ডিলিট',
+                edit_photos_count: (n) => `${n}টি ছবি`,
+                edit_pos_first: '১ নাম্বার (সবার প্রথমে)',
+                edit_pos_last: (n) => `${n} নাম্বার (সবার শেষে)`,
+                edit_pos_num: (n) => `${n} নাম্বার`,
+                edit_err_ch_name: 'চ্যাপ্টারের নাম লিখুন!',
+                edit_photo_added: (n) => `✓ ${n}টি ছবি সব ডিভাইসে যোগ হয়েছে!`,
+                edit_ch_added: '✓ নতুন চ্যাপ্টার সব ডিভাইসে যোগ হয়েছে!',
+                edit_ch_moved: '✓ চ্যাপ্টারের অবস্থান পরিবর্তন হয়েছে!',
+                edit_photo_deleted: '✓ ছবিটি সব ডিভাইস থেকে ডিলিট হয়েছে!',
+                edit_ch_deleted: '✓ চ্যাপ্টারটি সব ডিভাইস থেকে ডিলিট হয়েছে!',
+                edit_confirm_del_photo: 'এই ছবিটি ওয়েবসাইট থেকে ডিলিট করবেন?',
+                edit_confirm_del_ch: (name) => `"${name}" চ্যাপ্টার এবং এর সব ছবি ডিলিট করবেন?`,
+                edit_no_photos: 'এই চ্যাপ্টারে এখনো কোনো ছবি নেই।'
             }
         };
 
@@ -1831,9 +2301,15 @@ const gallery = document.getElementById('gallery');
                 const key = el.getAttribute('data-i18n-tip');
                 if (key) el.setAttribute('data-tooltip', t(key));
             });
-
-            const langLabel = document.getElementById('lang-toggle-label');
+const langLabel = document.getElementById('lang-toggle-label');
             if (langLabel) langLabel.textContent = currentLang === 'en' ? 'বাংলা' : 'EN';
+
+            const editLangLabel = document.getElementById('edit-lang-toggle-label');
+            if (editLangLabel) editLangLabel.textContent = currentLang === 'en' ? 'বাংলা' : 'EN';
+
+            if (typeof renderEditPanelUI === 'function' && document.getElementById('edit-panel-tab')?.classList.contains('open')) {
+                renderEditPanelUI();
+            }
 
             if (autoPlayBtn) {
                 autoPlayBtn.textContent = isAutoPlaying ? t('autoplay_on') : t('autoplay_off');
@@ -1936,32 +2412,345 @@ const gallery = document.getElementById('gallery');
                 }
             });
         }
+// ===== এডিট ভেরিফিকেশন ও এডিট ট্যাব লজিক =====
+        const openEditAuthBtn = document.getElementById('open-edit-auth-btn');
+        const editAuthModal = document.getElementById('edit-auth-modal');
+        const editAuthCloseBtn = document.getElementById('edit-auth-close-btn');
+        const editAuthPin = document.getElementById('edit-auth-pin');
+        const editAuthSubmitBtn = document.getElementById('edit-auth-submit-btn');
+        const editAuthMsg = document.getElementById('edit-auth-msg');
 
-        // পিন পরিবর্তন পপআপ বক্স ও ক্লাউড সেভ লজিক
-        const openPinChangeBtn = document.getElementById('open-pin-change-btn');
-        const pinChangeModal = document.getElementById('pin-change-modal');
-        const pinChangeCloseBtn = document.getElementById('pin-change-close-btn');
+        const editPanelTab = document.getElementById('edit-panel-tab');
+        const editTabCloseBtn = document.getElementById('edit-tab-close-btn');
+        const editLangToggleBtn = document.getElementById('edit-lang-toggle-btn');
+        const editPhotoChapterSelect = document.getElementById('edit-photo-chapter-select');
+        const editPhotoUrls = document.getElementById('edit-photo-urls');
+        const editAddPhotoBtn = document.getElementById('edit-add-photo-btn');
+        const editPhotoStatus = document.getElementById('edit-photo-status');
+
+        const editNewChName = document.getElementById('edit-new-ch-name');
+        const editNewChPos = document.getElementById('edit-new-ch-pos');
+        const editNewChUrls = document.getElementById('edit-new-ch-urls');
+        const editAddChapterBtn = document.getElementById('edit-add-chapter-btn');
+        const editChapterStatus = document.getElementById('edit-chapter-status');
+        const editChaptersListEl = document.getElementById('edit-chapters-list');
+        const editSyncBadge = document.getElementById('edit-sync-badge');
+
         const pcOldPin = document.getElementById('pc-old-pin');
         const pcMasterKey = document.getElementById('pc-master-key');
         const pcNewPin = document.getElementById('pc-new-pin');
         const pcSaveBtn = document.getElementById('pc-save-btn');
         const pcStatusMsg = document.getElementById('pc-status-msg');
 
-        function closePinChangeModal() {
-            if (pinChangeModal) pinChangeModal.classList.remove('open');
+        const expandedPreviewSet = new Set();
+
+        function closeEditAuthModal() {
+            if (editAuthModal) editAuthModal.classList.remove('open');
         }
 
-        if (openPinChangeBtn) {
-            openPinChangeBtn.addEventListener('click', () => {
-                pcStatusMsg.textContent = '';
-                pcStatusMsg.className = 'settings-status-msg';
-                pcOldPin.value = '';
-                pcMasterKey.value = '';
-                pcNewPin.value = '';
-                pinChangeModal.classList.add('open');
+        function closeEditPanelTab() {
+            if (editPanelTab) {
+                editPanelTab.classList.remove('open');
+                editPanelTab.setAttribute('aria-hidden', 'true');
+            }
+            if (isAppUnlocked && overlay.style.display !== 'block') {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function closePinChangeModal() {
+            closeEditAuthModal();
+            closeEditPanelTab();
+        }
+
+        function parsePhotoLinks(rawText) {
+            return String(rawText || '')
+                .split(/[\n,]+/)
+                .map(s => s.trim())
+                .filter(s => /^https?:\/\/.+/i.test(s));
+        }
+
+        function showEditBadge(text, isError = false) {
+            if (!editSyncBadge) return;
+            editSyncBadge.textContent = text;
+            editSyncBadge.style.color = isError ? '#f87171' : '#4ade80';
+            setTimeout(() => {
+                if (editSyncBadge.textContent === text) editSyncBadge.textContent = '';
+            }, 3000);
+        }
+
+        async function commitChaptersUpdate(successText, statusEl) {
+            renderFilterButtons();
+            renderGalleryView();
+            renderEditPanelUI();
+            if (statusEl) {
+                statusEl.className = 'settings-status-msg';
+                statusEl.textContent = t('saving_cloud');
+            }
+            const ok = await saveChaptersToCloud(allChaptersList);
+            if (ok) {
+                if (statusEl) {
+                    statusEl.textContent = successText;
+                    statusEl.classList.add('success');
+                }
+                showEditBadge(successText, false);
+                triggerVibration(60);
+            } else {
+                if (statusEl) {
+                    statusEl.textContent = t('cloud_save_fail');
+                    statusEl.classList.add('error');
+                }
+                showEditBadge(t('cloud_save_fail'), true);
+            }
+        }
+
+        function renderEditPanelUI() {
+            if (!editChaptersListEl) return;
+
+            // ১. ছবি যোগ করার চ্যাপ্টার ড্রপডাউন আপডেট
+            if (editPhotoChapterSelect) {
+                const prevVal = editPhotoChapterSelect.value;
+                editPhotoChapterSelect.innerHTML = '';
+                allChaptersList.forEach((ch, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = String(idx);
+                    opt.textContent = `CH ${idx + 1} — ${getChapterDisplayName(ch, currentLang)}`;
+                    editPhotoChapterSelect.appendChild(opt);
+                });
+                if (prevVal && Number(prevVal) < allChaptersList.length) {
+                    editPhotoChapterSelect.value = prevVal;
+                }
+            }
+
+            // ২. নতুন চ্যাপ্টারের পজিশন ড্রপডাউন আপডেট
+            if (editNewChPos) {
+                editNewChPos.innerHTML = '';
+                const totalOptions = allChaptersList.length + 1;
+                for (let i = 0; i < totalOptions; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = String(i);
+                    if (i === 0) opt.textContent = t('edit_pos_first');
+                    else if (i === totalOptions - 1) opt.textContent = t('edit_pos_last', i + 1);
+                    else opt.textContent = t('edit_pos_num', i + 1);
+                    editNewChPos.appendChild(opt);
+                }
+                editNewChPos.value = String(totalOptions - 1);
+            }
+
+            // ৩. সব চ্যাপ্টারের লিস্ট, অর্ডার চেঞ্জ, প্রিভিউ ও ছবি ডিলিট
+            editChaptersListEl.innerHTML = '';
+            allChaptersList.forEach((ch, chIdx) => {
+                const displayName = getChapterDisplayName(ch, currentLang);
+                const item = document.createElement('div');
+                item.className = 'edit-chapter-item';
+
+                const header = document.createElement('div');
+                header.className = 'edit-chapter-header';
+
+                const info = document.createElement('div');
+                info.innerHTML = `<div class="text-white font-bold text-sm md:text-base">CH ${chIdx + 1}: ${displayName}</div>
+                                  <div class="text-white/60 text-xs">${t('edit_photos_count', ch.links.length)}</div>`;
+
+                const controls = document.createElement('div');
+                controls.className = 'edit-chapter-controls';
+
+                // চ্যাপ্টারের অবস্থান পরিবর্তন (১ম, ২য়, ..., শেষ)
+                const posSel = document.createElement('select');
+                posSel.className = 'edit-pos-select';
+                allChaptersList.forEach((_, posIdx) => {
+                    const opt = document.createElement('option');
+                    opt.value = String(posIdx);
+                    if (posIdx === 0) opt.textContent = `#1 (${currentLang === 'bn' ? 'প্রথম' : 'First'})`;
+                    else if (posIdx === allChaptersList.length - 1) opt.textContent = `#${posIdx + 1} (${currentLang === 'bn' ? 'শেষ' : 'Last'})`;
+                    else opt.textContent = `#${posIdx + 1}`;
+                    if (posIdx === chIdx) opt.selected = true;
+                    posSel.appendChild(opt);
+                });
+                posSel.addEventListener('change', async () => {
+                    const targetPos = Number(posSel.value);
+                    if (targetPos === chIdx) return;
+                    const [moved] = allChaptersList.splice(chIdx, 1);
+                    allChaptersList.splice(targetPos, 0, moved);
+                    expandedPreviewSet.clear();
+                    await commitChaptersUpdate(t('edit_ch_moved'), null);
+                });
+
+                // প্রিভিউ বাটন
+                const isExpanded = expandedPreviewSet.has(chIdx);
+                const prevBtn = document.createElement('button');
+                prevBtn.type = 'button';
+                prevBtn.className = `edit-mini-btn ${isExpanded ? 'preview-active' : ''}`;
+                prevBtn.textContent = isExpanded ? t('edit_hide_preview_btn') : t('edit_preview_btn');
+                prevBtn.addEventListener('click', () => {
+                    if (expandedPreviewSet.has(chIdx)) expandedPreviewSet.delete(chIdx);
+                    else expandedPreviewSet.add(chIdx);
+                    renderEditPanelUI();
+                });
+
+                // চ্যাপ্টার ডিলিট বাটন
+                const delChBtn = document.createElement('button');
+                delChBtn.type = 'button';
+                delChBtn.className = 'edit-mini-btn danger';
+                delChBtn.textContent = t('edit_delete_ch_btn');
+                delChBtn.addEventListener('click', async () => {
+                    if (!confirm(t('edit_confirm_del_ch', displayName))) return;
+                    allChaptersList.splice(chIdx, 1);
+                    expandedPreviewSet.clear();
+                    if (activeFilterChapterIdx !== 'all' && activeFilterChapterIdx >= allChaptersList.length) {
+                        activeFilterChapterIdx = 'all';
+                    }
+                    await commitChaptersUpdate(t('edit_ch_deleted'), null);
+                });
+
+                controls.appendChild(posSel);
+                controls.appendChild(prevBtn);
+                controls.appendChild(delChBtn);
+
+                header.appendChild(info);
+                header.appendChild(controls);
+                item.appendChild(header);
+
+                // প্রিভিউ খোলা থাকলে ছোট ছোট ছবি ও ডান কোণায় ডিলিট আইকন দেখানো
+                if (isExpanded) {
+                    if (!ch.links.length) {
+                        const emptyMsg = document.createElement('div');
+                        emptyMsg.className = 'text-white/50 text-xs mt-3 pt-2 border-t border-white/10';
+                        emptyMsg.textContent = t('edit_no_photos');
+                        item.appendChild(emptyMsg);
+                    } else {
+                        const grid = document.createElement('div');
+                        grid.className = 'edit-preview-grid';
+                        ch.links.forEach((url, photoIdx) => {
+                            const box = document.createElement('div');
+                            box.className = 'edit-thumb-box';
+
+                            const img = document.createElement('img');
+                            img.src = url;
+                            img.loading = 'lazy';
+                            img.alt = `${displayName} ${photoIdx + 1}`;
+
+                            const delBtn = document.createElement('button');
+                            delBtn.type = 'button';
+                            delBtn.className = 'edit-thumb-del';
+                            delBtn.textContent = '✕';
+                            delBtn.addEventListener('click', async (e) => {
+                                e.stopPropagation();
+                                if (!confirm(t('edit_confirm_del_photo'))) return;
+                                ch.links.splice(photoIdx, 1);
+                                await commitChaptersUpdate(t('edit_photo_deleted'), null);
+                            });
+
+                            box.appendChild(img);
+                            box.appendChild(delBtn);
+                            grid.appendChild(box);
+                        });
+                        item.appendChild(grid);
+                    }
+                }
+
+                editChaptersListEl.appendChild(item);
             });
         }
-        if (pinChangeCloseBtn) pinChangeCloseBtn.addEventListener('click', closePinChangeModal);
+
+        function openEditPanelTab() {
+            closeEditAuthModal();
+            closeSettingsDrawer();
+            if (editPhotoStatus) { editPhotoStatus.textContent = ''; editPhotoStatus.className = 'settings-status-msg'; }
+            if (editChapterStatus) { editChapterStatus.textContent = ''; editChapterStatus.className = 'settings-status-msg'; }
+            if (pcStatusMsg) { pcStatusMsg.textContent = ''; pcStatusMsg.className = 'settings-status-msg'; }
+            renderEditPanelUI();
+            if (editPanelTab) {
+                editPanelTab.classList.add('open');
+                editPanelTab.setAttribute('aria-hidden', 'false');
+                editPanelTab.scrollTop = 0;
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function verifyEditAuth() {
+            const entered = editAuthPin.value.trim();
+            editAuthMsg.className = 'settings-status-msg';
+            if (entered === getActivePin()) {
+                editAuthPin.value = '';
+                editAuthMsg.textContent = '';
+                triggerVibration(60);
+                openEditPanelTab();
+            } else {
+                editAuthPin.value = '';
+                editAuthMsg.textContent = t('err_curr_pin');
+                editAuthMsg.classList.add('error');
+                triggerVibration([100, 50, 100]);
+            }
+        }
+
+        if (openEditAuthBtn) {
+            openEditAuthBtn.addEventListener('click', () => {
+                editAuthMsg.textContent = '';
+                editAuthMsg.className = 'settings-status-msg';
+                editAuthPin.value = '';
+                editAuthModal.classList.add('open');
+                setTimeout(() => editAuthPin.focus(), 100);
+            });
+        }
+        if (editAuthCloseBtn) editAuthCloseBtn.addEventListener('click', closeEditAuthModal);
+        if (editAuthSubmitBtn) editAuthSubmitBtn.addEventListener('click', verifyEditAuth);
+        if (editAuthPin) {
+            editAuthPin.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyEditAuth();
+                }
+            });
+        }
+
+        if (editTabCloseBtn) editTabCloseBtn.addEventListener('click', closeEditPanelTab);
+        if (editLangToggleBtn) {
+            editLangToggleBtn.addEventListener('click', () => {
+                applyLanguage(currentLang === 'en' ? 'bn' : 'en');
+            });
+        }
+
+        // ছবি যোগ করার বাটন
+        if (editAddPhotoBtn) {
+            editAddPhotoBtn.addEventListener('click', async () => {
+                const chIdx = Number(editPhotoChapterSelect.value);
+                const newLinks = parsePhotoLinks(editPhotoUrls.value);
+                editPhotoStatus.className = 'settings-status-msg';
+                if (!allChaptersList[chIdx] || !newLinks.length) {
+                    editPhotoStatus.textContent = t('err_valid_url');
+                    editPhotoStatus.classList.add('error');
+                    return;
+                }
+                allChaptersList[chIdx].links.push(...newLinks);
+                editPhotoUrls.value = '';
+                editAddPhotoBtn.disabled = true;
+                await commitChaptersUpdate(t('edit_photo_added', newLinks.length), editPhotoStatus);
+                editAddPhotoBtn.disabled = false;
+            });
+        }
+
+        // নতুন চ্যাপ্টার যোগ করার বাটন
+        if (editAddChapterBtn) {
+            editAddChapterBtn.addEventListener('click', async () => {
+                const chName = editNewChName.value.trim();
+                const posIdx = Number(editNewChPos.value);
+                const initLinks = parsePhotoLinks(editNewChUrls.value);
+                editChapterStatus.className = 'settings-status-msg';
+                if (!chName) {
+                    editChapterStatus.textContent = t('edit_err_ch_name');
+                    editChapterStatus.classList.add('error');
+                    return;
+                }
+                const newChapter = { name: chName, links: initLinks };
+                allChaptersList.splice(posIdx, 0, newChapter);
+                expandedPreviewSet.clear();
+                editNewChName.value = '';
+                editNewChUrls.value = '';
+                editAddChapterBtn.disabled = true;
+                await commitChaptersUpdate(t('edit_ch_added'), editChapterStatus);
+                editAddChapterBtn.disabled = false;
+            });
+        }
 
         if (pcSaveBtn) {
             pcSaveBtn.addEventListener('click', async () => {
@@ -2216,11 +3005,14 @@ const gallery = document.getElementById('gallery');
             }
         });
         window.addEventListener('pagehide', lockWebsiteNow);
-
-        // ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 বন্ধ — তবে শুধু ওয়ালপেপার লিংক বক্সে (#wp-new-url) পেস্ট ও সিলেক্ট চালু থাকবে
+        
+// ১. রাইট-ক্লিক, টেক্সট সিলেক্ট, কপি, কাট, ড্র্যাগ, Ctrl+U/F12 বন্ধ — তবে ওয়ালপেপার ও এডিট প্যানেলের লিংক/নাম বক্সে পেস্ট ও সিলেক্ট চালু থাকবে
+        function isPasteAllowedTarget(el) {
+            return !!(el && (el.id === 'wp-new-url' || (el.classList && el.classList.contains('allow-paste-input'))));
+        }
         ['contextmenu', 'copy', 'cut', 'selectstart', 'dragstart'].forEach(evt => {
             document.addEventListener(evt, e => {
-                if (e.target && e.target.id === 'wp-new-url') return;
+                if (isPasteAllowedTarget(e.target)) return;
                 e.preventDefault();
             });
         });
@@ -2230,9 +3022,9 @@ const gallery = document.getElementById('gallery');
                 lockWebsiteNow();
                 return;
             }
-            if (e.target && e.target.id === 'wp-new-url') {
+            if (isPasteAllowedTarget(e.target)) {
                 if ((e.ctrlKey || e.metaKey) && ['v', 'c', 'a', 'x'].includes(e.key.toLowerCase())) {
-                    return; // ওয়ালপেপার লিংক বক্সে Ctrl+V / Ctrl+A এলাউ করা হলো
+                    return; // ওয়ালপেপার ও এডিট ইনপুট বক্সে Ctrl+V / Ctrl+A এলাউ করা হলো
                 }
             }
             if ((e.ctrlKey || e.metaKey) && ['c', 'a', 'x', 'u', 's', 'v'].includes(e.key.toLowerCase())) {
@@ -2286,7 +3078,12 @@ const gallery = document.getElementById('gallery');
         }
 
 // ৪. সব চ্যাপ্টার একত্রিত করা (১ম: Vanda Mey | ২য়: Alyx Star | ৩য়: মিয়াঁ খলিফা | ৪র্থ: অন্যান্য | ৫ম: সেরা কিছু | ৬ষ্ঠ/শেষ: সানি লিওন)
-        function buildAllChaptersList() {
+function buildAllChaptersList() {
+            const cached = getCachedChapters();
+            if (cached && cached.length > 0) {
+                return cached;
+            }
+
             const alyxChapter = moreChapters.find(ch => ch.name.trim().toLowerCase() === 'alyx star');
             const seraKichuChapter = moreChapters.find(ch => ch.name.trim() === 'সেরা কিছু');
             const otherCustomChapters = moreChapters.filter(
@@ -2294,22 +3091,21 @@ const gallery = document.getElementById('gallery');
             );
 
             const list = [
-                { name: 'Vanda Mey', nameEn: 'Vanda Mey', nameBn: 'ভ্যান্ডা মে', links: vandaMeyLinks },
-                alyxChapter || { name: 'alyx star', links: [] },
-                { name: 'মিয়াঁ খলিফা', links: skskImageLinks },
-                ...otherCustomChapters
+                { name: 'Vanda Mey', nameEn: 'Vanda Mey', nameBn: 'ভ্যান্ডা মে', links: [...vandaMeyLinks] },
+                alyxChapter ? { ...alyxChapter, links: [...alyxChapter.links] } : { name: 'alyx star', links: [] },
+                { name: 'মিয়াঁ খলিফা', links: [...skskImageLinks] },
+                ...otherCustomChapters.map(ch => ({ ...ch, links: [...ch.links] }))
             ];
 
             if (seraKichuChapter) {
-                list.push(seraKichuChapter);
+                list.push({ ...seraKichuChapter, links: [...seraKichuChapter.links] });
             }
 
             // ১ম চ্যাপ্টার (সানি লিওন) এখন ৬ নম্বর (সবার শেষ) চ্যাপ্টার হিসেবে যোগ হবে
-            list.push({ name: 'সানি লিওন', links: imageLinks });
+            list.push({ name: 'সানি লিওন', links: [...imageLinks] });
 
             return list;
         }
-
 // টাইটেলের নিচে অটোমেটিক ALL এবং CH 1, CH 2, CH 3... বাটন তৈরি করা (বাটনের লেখা অপরিবর্তিত থাকবে, শুধু হোভার ওভারলে ভাষা বদলাবে)
         function renderFilterButtons() {
             const filterBar = document.getElementById('chapter-filter-bar');
